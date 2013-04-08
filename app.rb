@@ -2,6 +2,8 @@ require 'json'
 require 'sinatra'
 require 'bundler'
 
+Encoding.default_external = Encoding::UTF_8
+
 Bundler.require
 if ENV['VCAP_SERVICES'].nil?
     DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/images.db")
@@ -33,24 +35,29 @@ post '/lingr' do
   images = Image.all
   json["events"].map do |e|
     text = e['message']['text']
-    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
-      image = Image.first_or_create({:name => $1})
-      if image.update({:regexp => $2, :content => $3})
+    if m = text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
+      m = Regexp.last_match
+      image = Image.first_or_create({:name => m[1]})
+      if image.update({:regexp => m[2], :content => m[3]})
         ret += "updated\n"
       end
-    elsif text =~ /^!osusume\s+(\S+)$/
-      image = Image.get({:name => $1})
-      if image
+    elsif m = text =~ /^!osusume!\s+(\S+)$/
+      name = m[1]
+      image = Image.first({:name => name})
+      if image != nil
         image.destroy
-        ret += "deleted\n"
+        ret += "deleted '#{name}'\n"
+      else
+        ret += "not found '#{name}'\n"
       end
-    elsif text =~ /^!osusume!$/
+    elsif text =~ /^!osusume$/
       images.each do |x|
-        ret += "#{x[:name]} #{x[:regexp]}\n"
+        ret += "'#{x[:name]}' /#{x[:regexp]}/\n"
       end
     else
       images.each do |x|
-        if Regexp.new(x[:regexp]).match(text)
+        puts("#{x[:regexp]} #{text}")
+        if Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
           ret += "#{x[:content]}\n"
         end
       end
