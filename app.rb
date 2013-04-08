@@ -64,5 +64,5 @@ post '/lingr' do
       end
     end
   end
-  ret
+  ret.rstrip
 end
