@@ -35,13 +35,14 @@ post '/lingr' do
   images = Image.all
   json["events"].map do |e|
     text = e['message']['text']
-    if m = text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
+    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
       m = Regexp.last_match
       image = Image.first_or_create({:name => m[1]})
       if image.update({:regexp => m[2], :content => m[3]})
         ret += "updated\n"
       end
-    elsif m = text =~ /^!osusume!\s+(\S+)$/
+    elsif text =~ /^!osusume!\s+(\S+)$/
+      m = Regexp.last_match
       name = m[1]
       image = Image.first({:name => name})
       if image != nil
