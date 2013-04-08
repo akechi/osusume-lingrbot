@@ -17,8 +17,8 @@ class Image
     include DataMapper::Resource
     property :id, Serial
     property :name, String
-    property :text, String
-    property :regexp, String
+    property :content, String, :length => 256
+    property :regexp, String, :length => 256
 end
 DataMapper.finalize
 Image.auto_upgrade!
@@ -33,23 +33,25 @@ post '/lingr' do
   images = Image.all
   json["events"].map do |e|
     text = e['message']['text']
-    if text =~ /!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
-      image = Image.first_or_create(:name => $1)
-      image.attributes = {:name => $1, :regexp => $2, :text => $3}
-      if image.save
+    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
+      image = Image.first_or_create({:name => $1})
+      if image.update({:regexp => $2, :content => $3})
         ret += "updated\n"
       end
-    elsif text =~ /!osusume\s+(\S+)$/
-      image = Image.get(:name => $1)
+    elsif text =~ /^!osusume\s+(\S+)$/
+      image = Image.get({:name => $1})
       if image
-        if image.destroy
-          ret += "deleted\n"
-        end
+        image.destroy
+        ret += "deleted\n"
+      end
+    elsif text =~ /^!osusume!$/
+      images.each do |x|
+        ret += "#{x[:name]} #{x[:regexp]}\n"
       end
     else
       images.each do |x|
-        if Regexp.new(x.regexp).match(text)
-          ret += "#{x[:text]}\n"
+        if Regexp.new(x[:regexp]).match(text)
+          ret += "#{x[:content]}\n"
         end
       end
     end
