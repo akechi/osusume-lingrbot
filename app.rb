@@ -37,9 +37,12 @@ post '/lingr' do
     text = e['message']['text']
     if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
       m = Regexp.last_match
-      image = Image.first_or_create({:name => m[1]})
-      if image.update({:regexp => m[2], :content => m[3]})
-        ret += "updated\n"
+      name = m[1]
+      regexp = m[2]
+      content = m[3]
+      image = Image.first_or_create({:name => name})
+      if image.update({:regexp => regexp, :content => content})
+        ret += "updated '#{name}'\n"
       end
     elsif text =~ /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
