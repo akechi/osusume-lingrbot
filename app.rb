@@ -34,17 +34,16 @@ post '/lingr' do
   json["events"].map do |e|
     text = e['message']['text']
     if text =~ /!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
-      puts text
-	  image = Image.first_or_create(:name => $1)
+      image = Image.first_or_create(:name => $1)
       image.attributes = {:name => $1, :regexp => $2, :text => $3}
       if image.save
-        ret += "done\n"
+        ret += "updated\n"
       end
     elsif text =~ /!osusume\s+(\S+)$/
       image = Image.get(:name => $1)
       if image
         if image.destroy
-          ret += "done\n"
+          ret += "deleted\n"
         end
       end
     else
