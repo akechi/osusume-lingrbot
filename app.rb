@@ -33,7 +33,7 @@ post '/lingr' do
   json = JSON.parse(request.body.string)
   ret = ""
   images = Image.all
-  json["events"].map do |e|
+  json["events"].each do |e|
     text = e['message']['text']
     if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
       m = Regexp.last_match
