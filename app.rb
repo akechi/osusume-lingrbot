@@ -68,6 +68,7 @@ post '/lingr' do
           (0...m.size).each do |x|
             content.gsub!("$#{x}", m[x])
           end
+          content.gsub!('\n', "\n")
           res << content
         end
 
