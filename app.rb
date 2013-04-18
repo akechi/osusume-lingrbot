@@ -62,9 +62,15 @@ post '/lingr' do
       res = []
       images.each do |x|
         puts("#{x[:regexp]} #{text}")
-        if Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
-          res << x[:content]
+        m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
+        if m
+          content = x[:content]
+          (0...m.size).each do |x|
+            content.gsub!("$#{x}", m[x])
+          end
+          res << content
         end
+
       end
       ret = res[rand res.size]
     end
