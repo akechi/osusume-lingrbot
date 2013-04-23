@@ -44,6 +44,17 @@ post '/lingr' do
       if osusume.update({:regexp => regexp, :content => content})
         ret += "updated '#{name}'\n"
       end
+    elsif text =~ /^!osusume\s+(\S+)$/
+      m = Regexp.last_match
+      name = m[1]
+      osusume = Osusume.first({:name => name})
+      if osusume != nil
+        ret += "Name: #{osusume[:name]}\n"
+        ret += "Regexp: /#{osusume[:regexp]}/\n"
+        ret += "Content: #{osusume[:content]}\n"
+      else
+        ret += "not found '#{name}'\n"
+      end
     elsif text =~ /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
       name = m[1]
