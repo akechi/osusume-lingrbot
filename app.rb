@@ -6,7 +6,7 @@ Encoding.default_external = Encoding::UTF_8
 
 Bundler.require
 if ENV['VCAP_SERVICES'].nil?
-    DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/images.db")
+    DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
 else
     require 'json'
     svcs = JSON.parse ENV['VCAP_SERVICES']
@@ -15,7 +15,7 @@ else
     user, pass, host, name = %w(user password host name).map { |key| creds[key] }
     DataMapper.setup(:default, "mysql://#{user}:#{pass}@#{host}/#{name}")
 end
-class Image
+class Osusume
     include DataMapper::Resource
     property :id, Serial
     property :name, String
@@ -23,7 +23,7 @@ class Image
     property :regexp, String, :length => 256
 end
 DataMapper.finalize
-Image.auto_upgrade!
+Osusume.auto_upgrade!
 
 get '/' do
   "hello"
@@ -32,7 +32,7 @@ end
 post '/lingr' do
   json = JSON.parse(request.body.string)
   ret = ""
-  images = Image.all
+  osusume = Osusume.all
   json["events"].each do |e|
     text = e['message']['text']
     if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
@@ -40,27 +40,27 @@ post '/lingr' do
       name = m[1]
       regexp = m[2]
       content = m[3]
-      image = Image.first_or_create({:name => name})
-      if image.update({:regexp => regexp, :content => content})
+      osusume = Osusume.first_or_create({:name => name})
+      if osusume.update({:regexp => regexp, :content => content})
         ret += "updated '#{name}'\n"
       end
     elsif text =~ /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
       name = m[1]
-      image = Image.first({:name => name})
-      if image != nil
-        image.destroy
+      osusume = Osusume.first({:name => name})
+      if osusume != nil
+        osusume.destroy
         ret += "deleted '#{name}'\n"
       else
         ret += "not found '#{name}'\n"
       end
     elsif text =~ /^!osusume$/
-      images.each do |x|
+      osusume.each do |x|
         ret += "'#{x[:name]}' /#{x[:regexp]}/\n"
       end
     else
       res = []
-      images.each do |x|
+      osusume.each do |x|
         puts("#{x[:regexp]} #{text}")
         m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
         if m
