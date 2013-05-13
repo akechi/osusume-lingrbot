@@ -1,6 +1,7 @@
 require 'json'
 require 'sinatra'
 require 'bundler'
+require 'uri'
 
 Encoding.default_external = Encoding::UTF_8
 
@@ -77,6 +78,7 @@ post '/lingr' do
         if m
           content = x[:content]
           (0...m.size).each do |x|
+            content.gsub!("$!#{x}", URI.escape(m[x]))
             content.gsub!("$#{x}", m[x])
           end
           content.gsub!('\n', "\n")
