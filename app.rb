@@ -36,7 +36,7 @@ post '/lingr' do
   osusume = Osusume.all
   json["events"].each do |e|
     text = e['message']['text']
-    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(\S+)$/
+    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/
       m = Regexp.last_match
       name = m[1]
       regexp = m[2]
