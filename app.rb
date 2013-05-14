@@ -36,7 +36,7 @@ post '/lingr' do
   osusume = Osusume.all
   json["events"].each do |e|
     text = e['message']['text']
-    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/
+    if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
       m = Regexp.last_match
       name = m[1]
       regexp = m[2]
@@ -56,6 +56,17 @@ post '/lingr' do
       else
         ret += "not found '#{name}'\n"
       end
+    elsif text =~ /^!osusume\?\s+(\S+)$/
+      m = Regexp.last_match
+      name = m[1]
+      matched = false
+      osusume.each do |x|
+        if Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
+          ret += "matched with '#{x[:name]}'\n"
+          matched = true
+        end
+      end
+      ret += "no matched" unless matched
     elsif text =~ /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
       name = m[1]
@@ -81,10 +92,8 @@ post '/lingr' do
             content.gsub!("$!#{x}", URI.escape(m[x]))
             content.gsub!("$#{x}", m[x])
           end
-          content.gsub!('\n', "\n")
           res << content
         end
-
       end
       ret = res[rand res.size]
     end
