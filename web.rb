@@ -43,7 +43,7 @@ end
 
 post '/lingr' do
   json = JSON.parse(request.body.string)
-  ret = ""
+  ret = ''
   json["events"].each do |e|
     text = e['message']['text']
     if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
