@@ -126,4 +126,3 @@ post '/lingr' do
   end
   ret.rstrip[0..999]
 end
-
