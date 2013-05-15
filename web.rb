@@ -4,7 +4,6 @@ require 'bundler'
 require 'uri'
 require 'sass'
 require 'slim'
-require 'sinatra/json'
 require 'coffee-script'
 
 Dir.chdir File.dirname(__FILE__)
@@ -116,7 +115,7 @@ get '/' do
 end
 
 post '/api' do
-  json :osusume => "#{osusume params[:text]}"
+	{:osusume => "#{osusume params[:text]}"}.to_json
 end
 
 post '/lingr' do
