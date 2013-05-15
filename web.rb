@@ -107,5 +107,5 @@ post '/lingr' do
       ret = "#{res[rand res.size]}"
     end
   end
-  ret.rstrip[1..1000]
+  ret.rstrip[0..1000]
 end
