@@ -101,12 +101,12 @@ helpers do
   include Rack::Utils; alias_method :h, :escape_html
 end
 
-get '/stylesheet.css' do
-  sass :stylesheet
+get '/application.css' do
+  sass :application
 end
 
-get '/osusume.js' do
-  coffee :osusume
+get '/application.js' do
+  coffee :application
 end
 
 get '/' do
