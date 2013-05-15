@@ -116,7 +116,7 @@ get '/' do
 end
 
 post '/api' do
-  json :osusume "#{osusume params[:text]}"
+  json :osusume => "#{osusume params[:text]}"
 end
 
 post '/lingr' do
