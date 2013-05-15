@@ -1,0 +1,20 @@
+doctype 5
+html
+  head
+    meta charset="UTF-8"
+    title osusume bot
+    link rel="stylesheet" href="stylesheet.css"
+  body
+    #content
+      table.osusumes
+        thead
+          tr
+            th Name
+            th Pattern
+            th Content
+        tbody
+          - for x in @osusumes
+            tr
+              td.name = x[:name]
+              td.regexp = x[:regexp]
+              td.content = x[:content]
