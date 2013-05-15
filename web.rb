@@ -104,7 +104,7 @@ post '/lingr' do
           res << content
         end
       end
-      ret = res[rand res.size] or ''
+      ret += res[rand res.size]
     end
   end
   ret.rstrip[1..1000]
