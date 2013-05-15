@@ -4,7 +4,7 @@ require 'bundler'
 require 'uri'
 require 'sass'
 require 'slim'
-require 'json'
+require 'sinatra/json'
 require 'coffee-script'
 
 Dir.chdir File.dirname(__FILE__)
