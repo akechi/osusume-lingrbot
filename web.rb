@@ -1,19 +1,12 @@
-require 'json'
-require 'sinatra'
 require 'bundler'
-require 'uri'
-require 'sass'
-require 'slim'
-require 'coffee-script'
 
 Dir.chdir File.dirname(__FILE__)
 
+Bundler.require
 set :port, 11615
 set :environment, :production
 
-Bundler.require
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
-
 class Osusume
     include DataMapper::Resource
     property :id, Serial
@@ -23,14 +16,6 @@ class Osusume
 end
 DataMapper.finalize
 Osusume.auto_upgrade!
-
-module Sinatra
-  module Templates
-    def slim(template, options={}, locals={})
-      render :slim, template, options, locals
-    end 
-  end
-end
 
 def osusume(text)
   ret = ''
@@ -95,10 +80,6 @@ def osusume(text)
     ret = "#{res[rand res.size]}"
   end
   ret
-end
-
-helpers do
-  include Rack::Utils; alias_method :h, :escape_html
 end
 
 get '/application.css' do
