@@ -115,7 +115,7 @@ get '/' do
   slim :index
 end
 
-post '/vim' do
+post '/api' do
   json :osusume "#{osusume params[:text]}"
 end
 
