@@ -5,7 +5,7 @@ require 'uri'
 require 'sass'
 require 'slim'
 
-File.chdir File.dirname(__FILE__)
+Dir.chdir File.dirname(__FILE__)
 
 set :port, 11615
 
