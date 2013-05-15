@@ -5,10 +5,12 @@ require 'uri'
 require 'sass'
 require 'slim'
 
+File.chdir File.dirname(__FILE__)
+
 set :port, 11615
 
 Bundler.require
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
+DataMapper::setup(:default, "sqlite3://osusume.db")
 
 class Osusume
     include DataMapper::Resource
@@ -109,3 +111,4 @@ post '/lingr' do
   end
   ret.rstrip[0..1000]
 end
+
