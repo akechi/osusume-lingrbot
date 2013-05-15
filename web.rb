@@ -4,6 +4,7 @@ require 'bundler'
 require 'uri'
 require 'sass'
 require 'slim'
+require 'json'
 require 'coffee-script'
 
 Dir.chdir File.dirname(__FILE__)
@@ -115,7 +116,7 @@ get '/' do
 end
 
 post '/vim' do
-  osusume params[:text]
+  json :osusume "#{osusume params[:text]}"
 end
 
 post '/lingr' do
