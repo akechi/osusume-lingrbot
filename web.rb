@@ -53,7 +53,7 @@ post '/lingr' do
       content = m[3]
       osusume = Osusume.first_or_create({:name => name})
       if osusume.update({:regexp => regexp, :content => content})
-        ret += "updated '#{name}'\n"
+        ret += "Updated '#{name}'\n"
       end
     elsif text =~ /^!osusume\s+(\S+)$/
       m = Regexp.last_match
@@ -64,7 +64,7 @@ post '/lingr' do
         ret += "Regexp: /#{osusume[:regexp]}/\n"
         ret += "Content: #{osusume[:content]}\n"
       else
-        ret += "not found '#{name}'\n"
+        ret += "Not found '#{name}'\n"
       end
     elsif text =~ /^!osusume\?\s+(\S+)$/
       m = Regexp.last_match
@@ -72,20 +72,20 @@ post '/lingr' do
       matched = false
       Osusume.all.each do |x|
         if Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
-          ret += "matched with '#{x[:name]}'\n"
+          ret += "Matched with '#{x[:name]}'\n"
           matched = true
         end
       end
-      ret += "no matched" unless matched
+      ret += "No matched" unless matched
     elsif text =~ /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
       name = m[1]
       osusume = Osusume.first({:name => name})
       if osusume != nil
         osusume.destroy
-        ret += "deleted '#{name}'\n"
+        ret += "Deleted '#{name}'\n"
       else
-        ret += "not found '#{name}'\n"
+        ret += "Not found '#{name}'\n"
       end
     elsif text =~ /^!osusume$/
       Osusume.all.each do |x|
