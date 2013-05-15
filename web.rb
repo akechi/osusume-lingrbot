@@ -9,6 +9,7 @@ require 'coffee-script'
 Dir.chdir File.dirname(__FILE__)
 
 set :port, 11615
+set :environment, :production
 
 Bundler.require
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
