@@ -10,7 +10,7 @@ Dir.chdir File.dirname(__FILE__)
 set :port, 11615
 
 Bundler.require
-DataMapper::setup(:default, "sqlite3://osusume.db")
+DataMapper::setup(:default, "sqlite3://./osusume.db")
 
 class Osusume
     include DataMapper::Resource
