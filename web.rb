@@ -103,7 +103,7 @@ post '/lingr' do
   json = JSON.parse(request.body.string)
   ret = ''
   json["events"].each do |e|
-    ret += "#{osusume e['message']['text']}"
+    ret += "#{osusume e['message']['text']}" if e['message']
   end
   ret.rstrip[0..999]
 end
