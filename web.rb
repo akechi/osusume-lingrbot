@@ -10,7 +10,7 @@ DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
 class Osusume
     include DataMapper::Resource
     property :id, Serial
-    property :name, String
+    property :name, String, :unique => true
     property :content, String, :length => 256
     property :regexp, String, :length => 256
 end
