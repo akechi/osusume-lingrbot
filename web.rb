@@ -17,7 +17,8 @@ end
 DataMapper.finalize
 Osusume.auto_upgrade!
 
-def osusume(text)
+def osusume(message)
+  text = message['text']
   ret = ''
   if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
     m = Regexp.last_match
@@ -49,7 +50,7 @@ def osusume(text)
         matched = true
       end
     end
-    ret += "No matched" unless matched
+    ret += 'No matched' unless matched
   elsif text =~ /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
@@ -74,6 +75,9 @@ def osusume(text)
           content.gsub!("$!#{x}", URI.escape(m[x]))
           content.gsub!("$#{x}", m[x])
         end
+        content.gsub! /\$m\[["']([^"']+)["']\]/ do |x|
+          message[$1]
+        end
         res << content
       end
     end
@@ -96,14 +100,14 @@ get '/' do
 end
 
 post '/api' do
-	{:osusume => "#{osusume params[:text]}"}.to_json
+	{:osusume => "#{osusume ({"text"=> params[:text]})}"}.to_json
 end
 
 post '/lingr' do
   json = JSON.parse(request.body.string)
   ret = ''
   json["events"].each do |e|
-    ret += "#{osusume e['message']['text']}" if e['message']
+    ret += "#{osusume e['message']}" if e['message']
   end
   ret.rstrip[0..999]
 end
