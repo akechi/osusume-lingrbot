@@ -1,9 +1,8 @@
+# -*- coding: utf-8 -*-
 require 'bundler'
 
 Dir.chdir File.dirname(__FILE__)
-
 Bundler.require
-set :port, 11615
 set :environment, :production
 
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
