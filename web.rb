@@ -41,7 +41,7 @@ def osusume(message)
     end
   elsif text =~ /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
-    name = m[1]
+    text = m[1]
     matched = false
     Osusume.all.each do |x|
       if Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
