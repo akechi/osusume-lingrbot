@@ -39,7 +39,7 @@ def osusume(message)
     else
       ret += "Not found '#{name}'\n"
     end
-  elsif text =~ /^!osusume\?\s+(\S+)$/
+  elsif text =~ /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     name = m[1]
     matched = false
