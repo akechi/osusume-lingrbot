@@ -12,12 +12,15 @@ html
       table.osusumes
         thead
           tr
+            th Delete
             th Name
             th Pattern
             th Content
         tbody
           - for x in @osusumes
             tr
+              td.delete
+                input.delete type="button" id=x[:name] value="Delete"
               td.name = x[:name]
               td.regexp = x[:regexp]
               td.content = x[:content]

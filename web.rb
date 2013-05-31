@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'bundler'
+require 'open-uri'
+require 'digest/sha1'
 
 Dir.chdir File.dirname(__FILE__)
 Bundler.require
@@ -98,8 +100,17 @@ get '/' do
   slim :index
 end
 
+post '/delete' do
+  content_type :json
+  bot_verifier = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
+  osusume ({"text"=> params[:name]})
+  open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("'#{params[:name]}' がWebから削除されました")}&bot_verifier=#{bot_verifier}"
+  return '{"status": "OK"}'
+end
+
 post '/api' do
-	{:osusume => "#{osusume ({"text"=> params[:text]})}"}.to_json
+  content_type :json
+  {:osusume => "#{osusume ({"text"=> params[:text]})}"}.to_json
 end
 
 post '/lingr' do
