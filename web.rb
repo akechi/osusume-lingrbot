@@ -19,8 +19,7 @@ DataMapper.finalize
 Osusume.auto_upgrade!
 
 def osusume(message)
-  text = message['text']
-  case text
+  case message['text']
   when /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
     m = Regexp.last_match
     name = m[1]
@@ -67,7 +66,7 @@ def osusume(message)
     }.join "\n"
   else
     Osusume.all.map {|x|
-      m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
+      m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
       next if !m
       content = x[:content]
       (0...m.size).each do |x|
