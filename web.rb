@@ -47,13 +47,14 @@ def osusume(message)
     text = m[1]
     xs_matched = Osusume.all.
       select {|x| Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text) }
+    messages = xs_matched.map {|x|
+      "Matched with '#{x[:name]}'"
+    }
     ret +=
-      if xs_matched.empty?
+      if messages.empty?
         'No matched'
       else
-        xs_matched.map {|x|
-          "Matched with '#{x[:name]}'"
-        }.join "\n"
+        messages.join "\n"
       end
   when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
