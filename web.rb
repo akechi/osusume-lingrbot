@@ -50,12 +50,7 @@ def osusume(message)
     messages = xs_matched.map {|x|
       "Matched with '#{x[:name]}'"
     }
-    ret +=
-      if messages.empty?
-        'No matched'
-      else
-        messages.join "\n"
-      end
+    ret += messages.empty? ? 'No matched' : messages.join("\n")
   when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
