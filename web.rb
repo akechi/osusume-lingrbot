@@ -20,7 +20,6 @@ Osusume.auto_upgrade!
 
 def osusume(message)
   text = message['text']
-  ret = ''
   case text
   when /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
     m = Regexp.last_match
@@ -28,24 +27,22 @@ def osusume(message)
     regexp = m[2]
     content = m[3]
     item = Osusume.first_or_create({:name => name})
-    ret +=
-      if item.update({:regexp => regexp, :content => content})
-        "Updated '#{name}'\n"
-      else
-        ''
-      end
+    if item.update({:regexp => regexp, :content => content})
+      "Updated '#{name}'\n"
+    else
+      ''
+    end
   when /^!osusume\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
     item = Osusume.first({:name => name})
-    ret +=
-      if item
-        "Name: #{item[:name]}\n" +
-          "Regexp: /#{item[:regexp]}/\n" +
-          "Content: #{item[:content]}\n"
-      else
-        "Not found '#{name}'\n"
-      end
+    if item
+      "Name: #{item[:name]}\n" +
+        "Regexp: /#{item[:regexp]}/\n" +
+        "Content: #{item[:content]}\n"
+    else
+      "Not found '#{name}'\n"
+    end
   when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
@@ -54,20 +51,19 @@ def osusume(message)
     }.map {|x|
       "Matched with '#{x[:name]}'"
     }
-    ret += messages.empty? ? 'No matched' : messages.join("\n")
+    messages.empty? ? 'No matched' : messages.join("\n")
   when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
     item = Osusume.first({:name => name})
-    ret +=
-      if item
-        item.destroy
-        "Deleted '#{name}'\n"
-      else
-        "Not found '#{name}'\n"
-      end
+    if item
+      item.destroy
+      "Deleted '#{name}'\n"
+    else
+      "Not found '#{name}'\n"
+    end
   when /^!osusume$/
-    ret += Osusume.all.map {|x|
+    Osusume.all.map {|x|
       "'#{x[:name]}' /#{x[:regexp]}/"
     }.join "\n"
   else
@@ -85,9 +81,8 @@ def osusume(message)
       end
       res << content
     end
-    ret = "#{res.sample}"
+    "#{res.sample}"
   end
-  ret
 end
 
 get '/application.css' do
