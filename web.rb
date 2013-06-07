@@ -113,9 +113,9 @@ end
 
 post '/lingr' do
   json = JSON.parse(request.body.string)
-  ret = ''
-  json["events"].each do |e|
-    ret += "#{osusume e['message']}" if e['message']
-  end
+  ret = json["events"].
+    select {|e| e['message'] }.
+    map {|e| "#{osusume(e['message'])}" }.
+    join
   ret.rstrip[0..999]
 end
