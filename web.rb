@@ -28,20 +28,24 @@ def osusume(message)
     regexp = m[2]
     content = m[3]
     item = Osusume.first_or_create({:name => name})
-    if item.update({:regexp => regexp, :content => content})
-      ret += "Updated '#{name}'\n"
-    end
+    ret +=
+      if item.update({:regexp => regexp, :content => content})
+        "Updated '#{name}'\n"
+      else
+        ''
+      end
   when /^!osusume\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
     item = Osusume.first({:name => name})
-    if item != nil
-      ret += "Name: #{item[:name]}\n"
-      ret += "Regexp: /#{item[:regexp]}/\n"
-      ret += "Content: #{item[:content]}\n"
-    else
-      ret += "Not found '#{name}'\n"
-    end
+    ret +=
+      if item
+        "Name: #{item[:name]}\n" +
+          "Regexp: /#{item[:regexp]}/\n" +
+          "Content: #{item[:content]}\n"
+      else
+        "Not found '#{name}'\n"
+      end
   when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
@@ -55,12 +59,13 @@ def osusume(message)
     m = Regexp.last_match
     name = m[1]
     item = Osusume.first({:name => name})
-    if item != nil
-      item.destroy
-      ret += "Deleted '#{name}'\n"
-    else
-      ret += "Not found '#{name}'\n"
-    end
+    ret +=
+      if item
+        item.destroy
+        "Deleted '#{name}'\n"
+      else
+        "Not found '#{name}'\n"
+      end
   when /^!osusume$/
     ret += Osusume.all.map {|x|
       "'#{x[:name]}' /#{x[:regexp]}/"
