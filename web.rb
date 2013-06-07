@@ -113,10 +113,10 @@ end
 
 post '/lingr' do
   json = JSON.parse(request.body.string)
-  ret = json["events"].
+  json["events"].
     map {|e| e['message'] }.
     compact.
     map {|x| "#{osusume(x)}" }.
-    join
-  ret.rstrip[0..999]
+    join.
+    rstrip[0..999]
 end
