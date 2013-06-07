@@ -64,9 +64,9 @@ def osusume(message)
       ret += "Not found '#{name}'\n"
     end
   when /^!osusume$/
-    Osusume.all.each do |x|
-      ret += "'#{x[:name]}' /#{x[:regexp]}/\n"
-    end
+    ret += Osusume.all.map {|x|
+      "'#{x[:name]}' /#{x[:regexp]}/"
+    }.join "\n"
   else
     res = []
     Osusume.all.each do |x|
