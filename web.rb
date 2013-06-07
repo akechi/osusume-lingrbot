@@ -100,9 +100,10 @@ end
 
 post '/delete' do
   content_type :json
-  bot_verifier = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
-  result = osusume({"text" => "!osusume! #{params[:name]}"})
-  if /^Deleted / =~ result # TODO better success/fail handling
+  item = Osusume.first({:name => name})
+  if item != nil
+    item.destroy
+    bot_verifier = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
     open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{bot_verifier}"
     '{"status": "OK"}'
   else
