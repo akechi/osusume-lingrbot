@@ -45,14 +45,12 @@ def osusume(message)
   when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
-    matched = false
-    Osusume.all.
-      select {|x| Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text) }.
-      each do |x|
-        ret += "Matched with '#{x[:name]}'\n"
-        matched = true
-      end
-    ret += 'No matched' unless matched
+    xs_matched = Osusume.all.
+      select {|x| Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text) }
+    xs_matched.each do |x|
+      ret += "Matched with '#{x[:name]}'\n"
+    end
+    ret += 'No matched' if xs_matched.empty?
   when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
