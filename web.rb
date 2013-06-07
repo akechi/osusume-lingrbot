@@ -101,15 +101,11 @@ get '/' do
 end
 
 post '/delete' do
-  begin
   content_type :json
   bot_verifier = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
   osusume({"text"=> "!osusume! #{params[:name]}"})
   open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("'#{params[:name]}' がWebから削除されました")}&bot_verifier=#{bot_verifier}"
   '{"status": "OK"}'
-  rescue => e
-    e.to_s
-  end
 end
 
 post '/api' do
