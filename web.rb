@@ -75,7 +75,7 @@ def osusume(message)
         content.gsub!("$!#{x}", URI.escape(m[x]))
         content.gsub!("$#{x}", m[x])
       end
-      content.gsub! /\$m\[["']([^"']+)["']\]/ do |x|
+      content.gsub! /\$m\[["']([^"']+)["']\]/ do |x| # x isn't used...!
         message[$1]
       end
       content
