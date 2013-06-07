@@ -45,10 +45,9 @@ def osusume(message)
   when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
-    xs_matched = Osusume.all.select {|x|
+    messages = Osusume.all.select {|x|
       Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
-    }
-    messages = xs_matched.map {|x|
+    }.map {|x|
       "Matched with '#{x[:name]}'"
     }
     ret += messages.empty? ? 'No matched' : messages.join("\n")
