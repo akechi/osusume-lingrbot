@@ -82,7 +82,7 @@ def osusume(message)
       end
       res << content
     end
-    ret = "#{res[rand res.size]}"
+    ret = "#{res.sample}"
   end
   ret
 end
