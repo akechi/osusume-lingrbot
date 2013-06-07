@@ -72,15 +72,15 @@ def osusume(message)
     Osusume.all.each do |x|
       m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
       next if !m
-        content = x[:content]
-        (0...m.size).each do |x|
-          content.gsub!("$!#{x}", URI.escape(m[x]))
-          content.gsub!("$#{x}", m[x])
-        end
-        content.gsub! /\$m\[["']([^"']+)["']\]/ do |x|
-          message[$1]
-        end
-        res << content
+      content = x[:content]
+      (0...m.size).each do |x|
+        content.gsub!("$!#{x}", URI.escape(m[x]))
+        content.gsub!("$#{x}", m[x])
+      end
+      content.gsub! /\$m\[["']([^"']+)["']\]/ do |x|
+        message[$1]
+      end
+      res << content
     end
     ret = "#{res[rand res.size]}"
   end
