@@ -100,7 +100,7 @@ end
 
 post '/delete' do
   content_type :json
-  item = Osusume.first({:name => name})
+  item = Osusume.first({:name => params[:name]})
   if item != nil
     item.destroy
     bot_verifier = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
