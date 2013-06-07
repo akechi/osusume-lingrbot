@@ -57,8 +57,7 @@ def osusume(message)
     name = m[1]
     item = Osusume.first({:name => name})
     if item
-      item.destroy
-      "Deleted '#{name}'\n"
+      item.destroy && "Deleted '#{name}'\n"
     else
       "Not found '#{name}'\n"
     end
