@@ -1,6 +1,6 @@
 $ ->
   $('.content').each (i, e) ->
-    text = $(e).text().replace /\bhttps?:\/\/\S+(?:jpg|png|gif|JPG|PNG|GIF)(\s.*|\?\S+)?$/, (match) ->
+    text = $(e).text().replace /\bhttps?:\/\/\S+(?:jpg|png|gif|JPG|PNG|GIF)(\b|\?\S+|$)/, (match) ->
       '<img class="osusume-image" src="' + match.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&apos;') + '">'
     $(e).html(text.replace(/\n/g, '<br/>'))
   $('input.delete').click (e) ->
