@@ -21,7 +21,8 @@ Osusume.auto_upgrade!
 def osusume(message)
   text = message['text']
   ret = ''
-  if text =~ /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
+  case text
+  when /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
     m = Regexp.last_match
     name = m[1]
     regexp = m[2]
@@ -30,7 +31,7 @@ def osusume(message)
     if item.update({:regexp => regexp, :content => content})
       ret += "Updated '#{name}'\n"
     end
-  elsif text =~ /^!osusume\s+(\S+)$/
+  when /^!osusume\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
     item = Osusume.first({:name => name})
@@ -41,7 +42,7 @@ def osusume(message)
     else
       ret += "Not found '#{name}'\n"
     end
-  elsif text =~ /^!osusume\?\s+(.+)$/m
+  when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
     matched = false
@@ -52,7 +53,7 @@ def osusume(message)
       end
     end
     ret += 'No matched' unless matched
-  elsif text =~ /^!osusume!\s+(\S+)$/
+  when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
     item = Osusume.first({:name => name})
@@ -62,7 +63,7 @@ def osusume(message)
     else
       ret += "Not found '#{name}'\n"
     end
-  elsif text =~ /^!osusume$/
+  when /^!osusume$/
     Osusume.all.each do |x|
       ret += "'#{x[:name]}' /#{x[:regexp]}/\n"
     end
