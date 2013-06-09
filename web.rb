@@ -112,7 +112,7 @@ end
 post '/api' do
   content_type :json
   result = osusume({"text"=> params[:text]})
-  open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("#{params[:text].inspect} => #{result.inspect} from #{request.ip}")}&bot_verifier=#{BOT_VERIFIER}"
+  open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
   {:osusume => "#{result}"}.to_json
 end
 
