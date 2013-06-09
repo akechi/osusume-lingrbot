@@ -94,13 +94,14 @@ get '/' do
   slim :index
 end
 
+BOT_VERIFIER = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
+
 post '/delete' do
   content_type :json
   item = Osusume.first({:name => params[:name]})
   if item != nil
     item.destroy
-    bot_verifier = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
-    open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{bot_verifier}"
+    open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
     status 404
@@ -110,7 +111,9 @@ end
 
 post '/api' do
   content_type :json
-  {:osusume => "#{osusume({"text"=> params[:text]})}"}.to_json
+  result = osusume({"text"=> params[:text]})
+  open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("#{params[:text].inspect} => #{result.inspect} from #{headers['x-forwarded-for']}")}&bot_verifier=#{BOT_VERIFIER}"
+  {:osusume => "#{result}"}.to_json
 end
 
 post '/lingr' do
