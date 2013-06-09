@@ -2,6 +2,7 @@
 require 'bundler'
 require 'open-uri'
 require 'digest/sha1'
+require 'erb'
 
 Dir.chdir File.dirname(__FILE__)
 Bundler.require
@@ -17,6 +18,10 @@ class Osusume
 end
 DataMapper.finalize
 Osusume.auto_upgrade!
+
+def urlencode(x)
+  ERB::Util.url_encode x
+end
 
 def osusume(message)
   case message['text']
@@ -101,7 +106,7 @@ post '/delete' do
   item = Osusume.first({:name => params[:name]})
   if item != nil
     item.destroy
-    open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
+    open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
     status 404
@@ -112,7 +117,7 @@ end
 post '/api' do
   content_type :json
   result = osusume({"text"=> params[:text]})
-  open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{CGI.escape("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
+  open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
   {:osusume => "#{result}"}.to_json
 end
 
