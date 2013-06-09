@@ -119,6 +119,7 @@ end
 post '/lingr' do
   json = JSON.parse(request.body.string)
   json["events"].
+    select {|e| e['room'] == 'computer_science' or e['room'] == 'vim' }.
     map {|e| e['message'] }.
     compact.
     map {|x| "#{osusume(x)}" }.
