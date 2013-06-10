@@ -2,6 +2,7 @@
 require 'bundler'
 require 'open-uri'
 require 'digest/sha1'
+require 'json'
 require 'erb'
 
 Dir.chdir File.dirname(__FILE__)
@@ -25,12 +26,13 @@ end
 
 def osusume(message)
   case message['text']
-  when /^!osusume\s+(\S+)\s+(\S+)\s+(.+)$/m
+  when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
     m = Regexp.last_match
     name = m[1]
     regexp = m[2]
     content = m[3]
     item = Osusume.first_or_create({:name => name})
+    content = item[:content] unless content
     if item.update({:regexp => regexp, :content => content})
       "Updated '#{name}'\n"
     else
