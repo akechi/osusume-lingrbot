@@ -128,7 +128,6 @@ post '/lingr' do
   json["events"].
     map {|e| e['message'] }.
     compact.
-    select {|e| e['room'] == 'computer_science' or e['room'] == 'vim' }.
     map {|x| "#{osusume(x)}" }.
     join.
     rstrip[0..999]
