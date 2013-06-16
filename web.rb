@@ -41,7 +41,7 @@ def osusume(message)
   when /^!osusume\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
-    item = Osusume.first({:name => name})
+    item = Osusume.first({name: name})
     if item
       "Name: #{item[:name]}\n" +
         "Regexp: /#{item[:regexp]}/\n" +
