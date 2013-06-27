@@ -14,8 +14,9 @@ class Osusume
     include DataMapper::Resource
     property :id, Serial
     property :name, String, :unique => true
-    property :content, String, :length => 256
     property :regexp, String, :length => 256
+    property :content, String, :length => 256
+    property :created_by, String, :length => 256
 end
 DataMapper.finalize
 Osusume.auto_upgrade!
@@ -33,7 +34,8 @@ def osusume(message)
     content = m[3]
     item = Osusume.first_or_create({:name => name})
     content = item[:content] unless content
-    if item.update({:regexp => regexp, :content => content})
+    created_by = item[:created_by] || message['nickname']
+    if item.update({:regexp => regexp, :content => content, :created_by => created_by})
       "Updated '#{name}'\n"
     else
       ''
