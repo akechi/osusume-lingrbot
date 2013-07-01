@@ -26,7 +26,7 @@ def urlencode(x)
   ERB::Util.url_encode x
 end
 
-def osusume(message)
+def osusume(message, from_web=false)
   case message['text']
   when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
     m = Regexp.last_match
@@ -64,10 +64,13 @@ def osusume(message)
   when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
-    item = Osusume.first({:name => name, :deleted => false})
+    item = Osusume.first({:name => name})
     if item
-      #item.destroy && "Deleted '#{name}'\n"
-      item.update({:deleted => true}) && "Deleted '#{name}'\n"
+      if from_web
+        item.update({:deleted => true}) && "Deleted '#{name}'\n"
+      else
+        item.destroy && "Deleted '#{name}'\n"
+      end
     else
       "Not found '#{name}'\n"
     end
@@ -111,7 +114,6 @@ post '/delete' do
   content_type :json
   item = Osusume.first({:name => params[:name], :deleted => false})
   if item != nil
-    #item.destroy
     item.update({:deleted => true})
     open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
@@ -123,7 +125,7 @@ end
 
 post '/api' do
   content_type :json
-  result = osusume({"text"=> params[:text]})
+  result = osusume({"text"=> params[:text]}, true)
   open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
   {:osusume => "#{result}"}.to_json
 end
