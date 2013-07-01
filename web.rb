@@ -17,6 +17,7 @@ class Osusume
     property :regexp, String, :length => 256
     property :content, String, :length => 256
     property :created_by, String, :length => 256
+    property :deleted, Boolean, :default => false
 end
 DataMapper.finalize
 Osusume.auto_upgrade!
@@ -35,7 +36,7 @@ def osusume(message)
     item = Osusume.first_or_create({:name => name})
     content = item[:content] unless content
     created_by = item[:created_by] || message['nickname']
-    if item.update({:regexp => regexp, :content => content, :created_by => created_by})
+    if item.update({:regexp => regexp, :content => content, :created_by => created_by, :deleted => false})
       "Updated '#{name}'\n"
     else
       ''
@@ -43,7 +44,7 @@ def osusume(message)
   when /^!osusume\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
-    item = Osusume.first({name: name})
+    item = Osusume.first({:name => name, :deleted => false})
     if item
       "Name: #{item[:name]}\n" +
         "Regexp: /#{item[:regexp]}/\n" +
@@ -54,7 +55,7 @@ def osusume(message)
   when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
-    messages = Osusume.all.select {|x|
+    messages = Osusume.all(:deleted => false).select {|x|
       Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
     }.map {|x|
       "Matched with '#{x[:name]}'"
@@ -63,18 +64,19 @@ def osusume(message)
   when /^!osusume!\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
-    item = Osusume.first({:name => name})
+    item = Osusume.first({:name => name, :deleted => false})
     if item
-      item.destroy && "Deleted '#{name}'\n"
+      #item.destroy && "Deleted '#{name}'\n"
+      item.update({:deleted => true}) && "Deleted '#{name}'\n"
     else
       "Not found '#{name}'\n"
     end
   when /^!osusume$/
-    Osusume.all.map {|x|
+    Osusume.all(:deleted => false).map {|x|
       "'#{x[:name]}' /#{x[:regexp]}/"
     }.join "\n"
   else
-    Osusume.all.map {|x|
+    Osusume.all(:deleted => false).map {|x|
       m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
       next if !m
       content = x[:content]
@@ -107,9 +109,10 @@ BOT_VERIFIER = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
 
 post '/delete' do
   content_type :json
-  item = Osusume.first({:name => params[:name]})
+  item = Osusume.first({:name => params[:name], :deleted => false})
   if item != nil
-    item.destroy
+    #item.destroy
+    item.update({:deleted => true})
     open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
