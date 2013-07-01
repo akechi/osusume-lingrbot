@@ -20,7 +20,7 @@ html
           - for x in @osusumes
             tr
               td.delete
-                - if x[:deleted]
+                - if x[:deleted]?
                   input.delete type="button" id=x[:name] value="Delete" disabled="disabled"
                 -
                   input.delete type="button" id=x[:name] value="Delete"
