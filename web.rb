@@ -80,7 +80,11 @@ def osusume(message, from_web=false)
     }.join "\n"
   else
     Osusume.all(:deleted => false).map {|x|
-      m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
+      begin
+        m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
+      rescue
+        next
+      end
       next if !m
       content = x[:content]
       (0...m.size).each do |x|
