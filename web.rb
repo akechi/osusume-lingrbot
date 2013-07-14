@@ -56,7 +56,11 @@ def osusume(message, from_web=false)
     m = Regexp.last_match
     text = m[1]
     messages = Osusume.all(:deleted => false).select {|x|
-      Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
+      begin
+        Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
+      rescue
+        false
+      end
     }.map {|x|
       "Matched with '#{x[:name]}'"
     }
