@@ -13,8 +13,8 @@ $ ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->
         if enable
-          $(e.target).parents('tr').attr('disabled', 'disabled')
-          $('#' + id).value('disabled')
+          $(e.target).parents('tr').addClass('disable')
+          $('#' + id).value('Enable')
         else
-          $(e.target).parents('tr').removeClass('disabled')
-          $('#' + id).removeAttr('disabled')
+          $(e.target).parents('tr').removeClass('disable')
+          $('#' + id).value('Disable')
