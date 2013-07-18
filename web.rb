@@ -27,7 +27,7 @@ def urlencode(x)
 end
 
 OSUSUME_ROOMS = %w[computer_science vim bottest3]
-LINGR_IP = []
+LINGR_IP = '219.94.235.225'
 def osusume(message, from_web_p)
   return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
   case message['text']
@@ -143,7 +143,7 @@ post '/api' do
 end
 
 post '/lingr' do
-  LINGR_IP << request.env['HTTP_X_REAL_IP']
+  return unless request.env['HTTP_X_REAL_IP'] == LINGR_IP
   json = JSON.parse(request.body.string)
   json["events"].
     map {|e| e['message'] }.
@@ -152,4 +152,3 @@ post '/lingr' do
     join.
     rstrip[0..999]
 end
-
