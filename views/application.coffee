@@ -12,7 +12,7 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->
-        if enable
+        if !enable
           $(e.target).parents('tr').addClass('disable')
           $('#' + id).val('Enable')
         else
