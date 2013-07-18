@@ -143,7 +143,7 @@ post '/api' do
 end
 
 post '/lingr' do
-  @lingr_ip = request.ip
+  @lingr_ip = request.env['REMOTE_ADDR']
   json = JSON.parse(request.body.string)
   json["events"].
     map {|e| e['message'] }.
