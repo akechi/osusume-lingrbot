@@ -3,13 +3,18 @@ $ ->
     text = $(e).text().replace /\bhttps?:\/\/\S+(?:jpg|png|gif|JPG|PNG|GIF)(\b|\?\S+|$)/, (match) ->
       '<img class="osusume-image" src="' + match.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&apos;') + '">'
     $(e).html(text.replace(/\n/g, '<br/>'))
-  $('input.delete').click (e) ->
+  $('input.manage').click (e) ->
     id = $(e.target).attr('id')
-    $(e.target).parents("tr").slideUp()
-    $.ajax '/osusume/delete',
+    enable = $('#' + id).attr('disabled') == 'disabled'
+    $.ajax '/osusume/manage',
       type: 'POST'
-      data: {"name": id},
+      data: {'name': id, 'enabled': !enable},
       error: (jqXHR, textStatus, errorThrown) ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->
-        $(e.target).parents("tr").fadeOut('slow')
+        if enable
+          $(e.target).parents('tr').attr('disabled', 'disabled')
+          $('#' + id).value('disabled')
+        else
+          $(e.target).parents('tr').removeClass('disabled')
+          $('#' + id).removeAttr('disabled')

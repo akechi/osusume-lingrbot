@@ -12,7 +12,7 @@ html
       table.osusumes
         thead
           tr
-            th Delete
+            th Enable
             th Name
             th Pattern
             th Content
@@ -21,9 +21,9 @@ html
             tr
               td.delete
                 - if x[:deleted]
-                  input.delete type="button" id=x[:name] value="Delete" disabled="disabled"
+                  input.manage type="button" id=x[:name] value="Enable"
                 - else
-                  input.delete type="button" id=x[:name] value="Delete"
+                  input.manage type="button" id=x[:name] value="Disable"
 
               td.name = x[:name]
               td.regexp = x[:regexp]
