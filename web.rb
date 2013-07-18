@@ -142,9 +142,9 @@ end
 post '/lingr' do
   json = JSON.parse(request.body.string)
   json["events"].
-    map {|e| [e['room'], e['message']] }.
-    filter {|room, msg| msg }.
-    map {|room, msg| "#{osusume(msg)}" }.
+    map {|e| e['message'] }.
+    compact.
+    map {|x| "#{osusume(x)}" }.
     join.
     rstrip[0..999]
 end
