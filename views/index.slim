@@ -18,17 +18,17 @@ html
             th Content
         tbody
           - for x in @osusumes
-            - if x[:deleted]
-              tr.disable
+            - if x[:enable]
+              tr
                 td
-                  input.manage type="button" id=x[:name] value="Enable"
+                  input.manage type="button" id=x[:name] value="Disable"
                   td.name = x[:name]
                   td.regexp = x[:regexp]
                   td.content = x[:content]
             - else
-              tr
+              tr.disable
                 td
-                  input.manage type="button" id=x[:name] value="Disable"
+                  input.manage type="button" id=x[:name] value="Enable"
                   td.name = x[:name]
                   td.regexp = x[:regexp]
                   td.content = x[:content]
