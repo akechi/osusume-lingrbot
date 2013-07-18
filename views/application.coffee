@@ -22,18 +22,18 @@ $ ->
           $('#' + id).val('Disable')
   # TODO: DRY
   $('.enable-filter').click (e) ->
-    if $(self).attr('data-hide') == 'show'
+    if $(this).attr('data-hide') == 'show'
       $('tr.enable').addClass('hide')
-      $(self).attr('data-hide', 'hide')
+      $(this).attr('data-hide', 'hide')
     else
       $('tr.enable').removeClass('hide')
-      $(self).attr('data-hide', 'show')
+      $(this).attr('data-hide', 'show')
   $('.disable-filter').click (e) ->
-    if $(self).attr('data-hide') == 'show'
+    if $(this).attr('data-hide') == 'show'
       $('tr.disable').addClass('hide')
-      $(self).attr('data-hide', 'hide')
+      $(this).attr('data-hide', 'hide')
     else
       $('tr.disable').removeClass('hide')
-      $(self).attr('data-hide', 'show')
+      $(this).attr('data-hide', 'show')
 
 
