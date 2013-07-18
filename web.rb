@@ -127,7 +127,7 @@ post '/manage' do
   item = Osusume.first({:name => params[:name]})
   if item != nil
     item.update({:deleted => params[:enabled] != 'true'})
-    open "http://lingr.com/api/room/say?room=#{ENV["OSUSUME_NOTIFY_ROOM"]}&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
+    open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
     status 404
