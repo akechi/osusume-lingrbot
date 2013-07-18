@@ -20,12 +20,20 @@ $ ->
           $(e.target).parents('tr').removeClass('disable')
           $(e.target).parents('tr').addClass('enable')
           $('#' + id).val('Disable')
+  # TODO: DRY
   $('.enable-filter').click (e) ->
-    if $(self).attr('data-on') == 1
-      $('tr.enable').css('display', 'none')
-      $(self).attr('data-on', 0)
+    if $(self).attr('data-hide') == 0
+      $('tr.enable').addClass('hide')
+      $(self).attr('data-hide', 1)
     else
-      $('tr.enable').css('display', 'block')
-      $(self).attr('data-on', 1)
+      $('tr.enable').removeClass('hide')
+      $(self).attr('data-hide', 0)
+  $('.disable-filter').click (e) ->
+    if $(self).attr('data-hide') == 0
+      $('tr.disable').addClass('hide')
+      $(self).attr('data-hide', 1)
+    else
+      $('tr.disable').removeClass('hide')
+      $(self).attr('data-hide', 0)
 
 
