@@ -5,10 +5,10 @@ $ ->
     $(e).html(text.replace(/\n/g, '<br/>'))
   $('input.manage').click (e) ->
     id = $(e.target).attr('id')
-    enable = $('#' + id).attr('disabled') == 'disabled'
+    enable = $('#' + id).val() == 'Enable'
     $.ajax '/osusume/manage',
       type: 'POST'
-      data: {'name': id, 'enabled': !enable},
+      data: {'name': id, 'enable': enable},
       error: (jqXHR, textStatus, errorThrown) ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->

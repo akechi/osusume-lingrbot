@@ -17,7 +17,7 @@ class Osusume
     property :regexp, String, :length => 256
     property :content, String, :length => 256
     property :created_by, String, :length => 256
-    property :deleted, Boolean, :default => false
+    property :enable, Boolean, :default => true
 end
 DataMapper.finalize
 Osusume.auto_upgrade!
@@ -39,7 +39,7 @@ def osusume(message, from_web_p)
     item = Osusume.first_or_create({:name => name})
     content = item[:content] unless content
     created_by = item[:created_by] || message['nickname']
-    if item.update({:regexp => regexp, :content => content, :created_by => created_by, :deleted => false})
+    if item.update({:regexp => regexp, :content => content, :created_by => created_by, :enable => true})
       "Updated '#{name}'\n"
     else
       ''
@@ -47,7 +47,7 @@ def osusume(message, from_web_p)
   when /^!osusume\s+(\S+)$/
     m = Regexp.last_match
     name = m[1]
-    item = Osusume.first({:name => name, :deleted => false})
+    item = Osusume.first({:name => name, :enable => true})
     if item
       "Name: #{item[:name]}\n" +
         "Regexp: /#{item[:regexp]}/\n" +
@@ -58,7 +58,7 @@ def osusume(message, from_web_p)
   when /^!osusume\?\s+(.+)$/m
     m = Regexp.last_match
     text = m[1]
-    messages = Osusume.all(:deleted => false).select {|x|
+    messages = Osusume.all(:enable => true).select {|x|
       begin
         Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
       rescue
@@ -74,7 +74,7 @@ def osusume(message, from_web_p)
     item = Osusume.first({:name => name})
     if item
       if from_web_p
-        item.update({:deleted => true}) && "Deleted '#{name}'\n"
+        item.update({:enable => false}) && "Deleted '#{name}'\n"
       else
         item.destroy && "Deleted '#{name}'\n"
       end
@@ -82,11 +82,11 @@ def osusume(message, from_web_p)
       "Not found '#{name}'\n"
     end
   when /^!osusume$/
-    Osusume.all(:deleted => false).map {|x|
+    Osusume.all(:enable => true).map {|x|
       "'#{x[:name]}' /#{x[:regexp]}/"
     }.join "\n"
   else
-    Osusume.all(:deleted => false).map {|x|
+    Osusume.all(:enable => true).map {|x|
       begin
         m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
       rescue
@@ -126,8 +126,8 @@ post '/manage' do
   content_type :json
   item = Osusume.first({:name => params[:name]})
   if item != nil
-    enable = params[:enabled] == 'true'
-    item.update({:deleted => !enable})
+    enable = params[:enable] == 'true'
+    item.update({:enable => enable})
     text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました"
     open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
