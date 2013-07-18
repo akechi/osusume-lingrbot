@@ -14,7 +14,7 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         if enable
           $(e.target).parents('tr').addClass('disable')
-          $('#' + id).value('Enable')
+          $('#' + id).val('Enable')
         else
           $(e.target).parents('tr').removeClass('disable')
-          $('#' + id).value('Disable')
+          $('#' + id).val('Disable')
