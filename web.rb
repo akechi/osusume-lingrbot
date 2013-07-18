@@ -26,7 +26,9 @@ def urlencode(x)
   ERB::Util.url_encode x
 end
 
+OSUSUME_ROOMS = %w[computer_science vim bottest3]
 def osusume(message, from_web_p)
+  return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
   case message['text']
   when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
     m = Regexp.last_match
