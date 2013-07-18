@@ -26,7 +26,7 @@ def urlencode(x)
   ERB::Util.url_encode x
 end
 
-def osusume(message, from_web)
+def osusume(message, from_web_p)
   case message['text']
   when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
     m = Regexp.last_match
@@ -70,7 +70,7 @@ def osusume(message, from_web)
     name = m[1]
     item = Osusume.first({:name => name})
     if item
-      if from_web
+      if from_web_p
         item.update({:deleted => true}) && "Deleted '#{name}'\n"
       else
         item.destroy && "Deleted '#{name}'\n"
