@@ -124,10 +124,10 @@ OSUSUME_NOTIFY_ROOM = 'computer_science'
 
 post '/manage' do
   content_type :json
-  item = Osusume.first({:name => params[:name]})
+  item = Osusume.first({name: params[:name]})
   if item != nil
     enable = params[:enable] == 'true'
-    item.update({:enable => enable})
+    item.update({enable: enable})
     text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました"
     open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
@@ -141,7 +141,7 @@ post '/api' do
   content_type :json
   result = osusume({"text"=> params[:text]}, true)
   open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
-  {:osusume => "#{result}"}.to_json
+  {osusume: "#{result}"}.to_json
 end
 
 post '/lingr' do
