@@ -117,13 +117,14 @@ get '/' do
 end
 
 BOT_VERIFIER = Digest::SHA1.hexdigest("osusume" + ENV["OSUSUME_BOT_SECRET"])
+OSUSUME_NOTIFY_ROOM = 'computer_science'
 
 post '/delete' do
   content_type :json
   item = Osusume.first({:name => params[:name], :deleted => false})
   if item != nil
     item.update({:deleted => true})
-    open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
+    open "http://lingr.com/api/room/say?room=#{ENV["OSUSUME_NOTIFY_ROOM"]}&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
     status 404
