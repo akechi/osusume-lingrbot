@@ -19,10 +19,11 @@ html
         tbody
           - for x in @osusumes
             tr
-              td.delete
-                - if x[:deleted]
+              - if x[:deleted]
+                td.disable
                   input.manage type="button" id=x[:name] value="Enable"
-                - else
+              - else
+                td.enable
                   input.manage type="button" id=x[:name] value="Disable"
 
               td.name = x[:name]
