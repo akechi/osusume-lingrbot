@@ -126,8 +126,10 @@ post '/manage' do
   content_type :json
   item = Osusume.first({:name => params[:name]})
   if item != nil
-    item.update({:deleted => params[:enabled] != 'true'})
-    open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode("'#{params[:name]}' がたぶんWebから削除されました")}&bot_verifier=#{BOT_VERIFIER}"
+    enable = params[:enabled] == 'true'
+    item.update({:deleted => !enable})
+    text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました"
+    open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
     status 404
