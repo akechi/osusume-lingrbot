@@ -26,7 +26,7 @@ def urlencode(x)
   ERB::Util.url_encode x
 end
 
-def osusume(message, from_web=false)
+def osusume(message, from_web)
   case message['text']
   when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
     m = Regexp.last_match
@@ -144,7 +144,7 @@ post '/lingr' do
   json["events"].
     map {|e| e['message'] }.
     compact.
-    map {|x| "#{osusume(x)}" }.
+    map {|x| "#{osusume(x, false)}" }.
     join.
     rstrip[0..999]
 end
