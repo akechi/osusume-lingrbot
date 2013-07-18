@@ -18,15 +18,19 @@ html
             th Content
         tbody
           - for x in @osusumes
-            tr
-              - if x[:deleted]
-                td.disable
+            - if x[:deleted]
+              tr.disable
+                td
                   input.manage type="button" id=x[:name] value="Enable"
-              - else
-                td.enable
+                  td.name = x[:name]
+                  td.regexp = x[:regexp]
+                  td.content = x[:content]
+            - else
+              tr
+                td
                   input.manage type="button" id=x[:name] value="Disable"
+                  td.name = x[:name]
+                  td.regexp = x[:regexp]
+                  td.content = x[:content]
 
-              td.name = x[:name]
-              td.regexp = x[:regexp]
-              td.content = x[:content]
       p = "powered by #{RUBY_DESCRIPTION}"
