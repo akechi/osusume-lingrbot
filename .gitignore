@@ -1,0 +1,5 @@
+.gitignore
+.sass-cache
+osusume.db
+Gemfile.lock
+backup
