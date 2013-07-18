@@ -20,5 +20,12 @@ $ ->
           $(e.target).parents('tr').removeClass('disable')
           $(e.target).parents('tr').addClass('enable')
           $('#' + id).val('Disable')
-  # $('.toggle.enable').click (e) ->
+  $('.enable-filter').click (e) ->
+    if $(self).attr('data-on') == 1
+      $('tr.enable').css('display', 'none')
+      $(self).attr('data-on', 0)
+    else
+      $('tr.enable').css('display', 'block')
+      $(self).attr('data-on', 1)
+
 
