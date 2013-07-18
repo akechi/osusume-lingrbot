@@ -13,8 +13,12 @@ $ ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->
         if !enable
+          $(e.target).parents('tr').removeClass('enable')
           $(e.target).parents('tr').addClass('disable')
           $('#' + id).val('Enable')
         else
           $(e.target).parents('tr').removeClass('disable')
+          $(e.target).parents('tr').addClass('enable')
           $('#' + id).val('Disable')
+  # $('.toggle.enable').click (e) ->
+

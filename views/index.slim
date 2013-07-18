@@ -9,6 +9,9 @@ html
   body
     h1 おすすめbot
     #content
+      #filter
+        button.enable data-on="1"
+        button.disable data-on="1"
       table.osusumes
         thead
           tr
@@ -19,7 +22,7 @@ html
         tbody
           - for x in @osusumes
             - if x[:enable]
-              tr
+              tr.enable
                 td
                   input.manage type="button" id=x[:name] value="Disable"
                   td.name = x[:name]
