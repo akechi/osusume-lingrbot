@@ -127,8 +127,9 @@ post '/manage' do
   item = Osusume.first({name: params[:name]})
   if item != nil
     enable = params[:enable] == 'true'
-    result = item.update({enable: enable})
-    text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました#{result}"
+    return 'no change' if item[:enable] == enable
+    item.update({enable: enable})
+    text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました"
     open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
     '{"status": "OK"}'
   else
