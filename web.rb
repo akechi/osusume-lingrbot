@@ -95,7 +95,7 @@ def osusume(message, from_web_p)
       next if !m
       content = x[:content]
       (0...m.size).each do |x|
-        content.gsub!("$!#{x}", URI.escape(m[x], ' +-/*{}|^&<>'))
+        content.gsub!("$!#{x}", URI.escape(m[x], ' +-/*{}|^&<>\\'))
         content.gsub!("$#{x}", m[x])
       end
       content.gsub! /\$m\[["']([^"']+)["']\]/ do |x| # x isn't used...!
