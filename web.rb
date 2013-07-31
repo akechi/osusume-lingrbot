@@ -125,7 +125,7 @@ OSUSUME_NOTIFY_ROOM = 'computer_science'
 post '/manage' do
   content_type :json
   item = Osusume.first({name: params[:name]})
-  if item != nil
+  if item
     enable = params[:enable] == 'true'
     return 'no change' if item[:enable] == enable
     item.update({enable: enable})
