@@ -28,7 +28,7 @@ end
 
 OSUSUME_ROOMS = %w[computer_science vim bottest3]
 LINGR_IP = '219.94.235.225'
-module WEb
+module Web
   module_function
   def osusume(message, from_web_p)
     return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
