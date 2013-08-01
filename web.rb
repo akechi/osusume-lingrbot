@@ -109,11 +109,6 @@ module Web
   end
 end
 
-# just for compatibility for now.
-def osusume(message, from_web_p)
-  Web.osusume(message, from_web_p)
-end
-
 get '/application.css' do
   sass :application
 end
@@ -127,7 +122,7 @@ get '/' do
   slim :index
 end
 
-BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
+BOT_VERIFIER = Digest::SHA1.hexdigest("Web.osusume#{ENV["OSUSUME_BOT_SECRET"]}")
 OSUSUME_NOTIFY_ROOM = 'computer_science'
 
 post '/manage' do
@@ -148,7 +143,7 @@ end
 
 post '/api' do
   content_type :json
-  result = osusume({"text"=> params[:text]}, true)
+  result = Web.osusume({"text"=> params[:text]}, true)
   open "http://lingr.com/api/room/say?room=computer_science&bot=osusume&text=#{urlencode("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
   {osusume: "#{result}"}.to_json
 end
@@ -159,7 +154,7 @@ post '/lingr' do
   json["events"].
     map {|e| e['message'] }.
     compact.
-    map {|x| "#{osusume(x, false)}" }.
+    map {|x| "#{Web.osusume(x, false)}" }.
     join.
     rstrip[0..999]
 end
