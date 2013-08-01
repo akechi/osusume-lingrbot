@@ -28,6 +28,8 @@ end
 
 OSUSUME_ROOMS = %w[computer_science vim bottest3]
 LINGR_IP = '219.94.235.225'
+module WEb
+  module_function
 def osusume(message, from_web_p)
   return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
   case message['text']
@@ -104,6 +106,12 @@ def osusume(message, from_web_p)
       content
     }.compact.sample.to_s
   end
+end
+end
+
+# just for compatibility for now.
+def osusume(message, from_web_p)
+  Web.osusume(message, from_web_p)
 end
 
 get '/application.css' do
