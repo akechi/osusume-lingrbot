@@ -30,83 +30,83 @@ OSUSUME_ROOMS = %w[computer_science vim bottest3]
 LINGR_IP = '219.94.235.225'
 module WEb
   module_function
-def osusume(message, from_web_p)
-  return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
-  case message['text']
-  when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
-    m = Regexp.last_match
-    name = m[1]
-    regexp = m[2]
-    content = m[3]
-    item = Osusume.first_or_create({:name => name})
-    content = item[:content] unless content
-    created_by = item[:created_by] || message['nickname']
-    if item.update({:regexp => regexp, :content => content, :created_by => created_by, :enable => true})
-      "Updated '#{name}'\n"
-    else
-      ''
-    end
-  when /^!osusume\s+(\S+)$/
-    m = Regexp.last_match
-    name = m[1]
-    item = Osusume.first({:name => name, :enable => true})
-    if item
-      "Name: #{item[:name]}\n" +
+  def osusume(message, from_web_p)
+    return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
+    case message['text']
+    when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
+      m = Regexp.last_match
+      name = m[1]
+      regexp = m[2]
+      content = m[3]
+      item = Osusume.first_or_create({:name => name})
+      content = item[:content] unless content
+      created_by = item[:created_by] || message['nickname']
+      if item.update({:regexp => regexp, :content => content, :created_by => created_by, :enable => true})
+        "Updated '#{name}'\n"
+      else
+        ''
+      end
+    when /^!osusume\s+(\S+)$/
+      m = Regexp.last_match
+      name = m[1]
+      item = Osusume.first({:name => name, :enable => true})
+      if item
+        "Name: #{item[:name]}\n" +
         "Regexp: /#{item[:regexp]}/\n" +
         "Content: #{item[:content]}\n"
-    else
-      "Not found '#{name}'\n"
-    end
-  when /^!osusume\?\s+(.+)$/m
-    m = Regexp.last_match
-    text = m[1]
-    messages = Osusume.all(:enable => true).select {|x|
-      begin
-        Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
-      rescue
-        false
-      end
-    }.map {|x|
-      "Matched with '#{x[:name]}'"
-    }
-    messages.empty? ? 'No matched' : messages.join("\n")
-  when /^!osusume!\s+(\S+)$/
-    m = Regexp.last_match
-    name = m[1]
-    item = Osusume.first({:name => name})
-    if item
-      if from_web_p
-        item.update({:enable => false}) && "Deleted '#{name}'\n"
       else
-        item.destroy && "Deleted '#{name}'\n"
+        "Not found '#{name}'\n"
       end
+    when /^!osusume\?\s+(.+)$/m
+      m = Regexp.last_match
+      text = m[1]
+      messages = Osusume.all(:enable => true).select {|x|
+        begin
+          Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(text)
+        rescue
+          false
+        end
+      }.map {|x|
+        "Matched with '#{x[:name]}'"
+      }
+      messages.empty? ? 'No matched' : messages.join("\n")
+    when /^!osusume!\s+(\S+)$/
+      m = Regexp.last_match
+      name = m[1]
+      item = Osusume.first({:name => name})
+      if item
+        if from_web_p
+          item.update({:enable => false}) && "Deleted '#{name}'\n"
+        else
+          item.destroy && "Deleted '#{name}'\n"
+        end
+      else
+        "Not found '#{name}'\n"
+      end
+    when /^!osusume$/
+      Osusume.all(:enable => true).map {|x|
+        "'#{x[:name]}' /#{x[:regexp]}/"
+      }.join "\n"
     else
-      "Not found '#{name}'\n"
+      Osusume.all(:enable => true).map {|x|
+        begin
+          m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
+        rescue
+          next
+        end
+        next if !m
+        content = x[:content]
+        (0...m.size).each do |x|
+          content.gsub!("$!#{x}", urlencode(m[x]))
+          content.gsub!("$#{x}", m[x])
+        end
+        content.gsub! /\$m\[["']([^"']+)["']\]/ do |x| # x isn't used...!
+          message[$1]
+        end
+        content
+      }.compact.sample.to_s
     end
-  when /^!osusume$/
-    Osusume.all(:enable => true).map {|x|
-      "'#{x[:name]}' /#{x[:regexp]}/"
-    }.join "\n"
-  else
-    Osusume.all(:enable => true).map {|x|
-      begin
-        m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
-      rescue
-        next
-      end
-      next if !m
-      content = x[:content]
-      (0...m.size).each do |x|
-        content.gsub!("$!#{x}", urlencode(m[x]))
-        content.gsub!("$#{x}", m[x])
-      end
-      content.gsub! /\$m\[["']([^"']+)["']\]/ do |x| # x isn't used...!
-        message[$1]
-      end
-      content
-    }.compact.sample.to_s
   end
-end
 end
 
 # just for compatibility for now.
