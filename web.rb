@@ -26,7 +26,7 @@ def urlencode(x)
   ERB::Util.url_encode x
 end
 
-OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg]
+OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
 LINGR_IP = '219.94.235.225'
 module Web
   module_function
