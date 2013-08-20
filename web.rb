@@ -118,7 +118,9 @@ get '/application.js' do
 end
 
 get '/' do
-  @osusumes = Osusume.all
+  @osusumes = Osusume.all.each {|x|
+    x[:content] = x[:content].gsub(/</, '&lt;').gsub(/>/, '&gt;') if x[:content]
+  }
   slim :index
 end
 

@@ -5,7 +5,8 @@ $ ->
     $(e).html(text.replace(/\n/g, '<br/>'))
   $('input.manage').click (e) ->
     id = $(e.target).attr('id')
-    enable = $('#' + id).val() == 'Enable'
+    node = document.getElementById(id)
+    enable = $(node).val() == 'Enable'
     $.ajax '/osusume/manage',
       type: 'POST'
       data: {'name': id, 'enable': enable},
@@ -15,11 +16,11 @@ $ ->
         if !enable
           $(e.target).parents('tr').removeClass('enable')
           $(e.target).parents('tr').addClass('disable')
-          $('#' + id).val('Enable')
+          $(node).val('Enable')
         else
           $(e.target).parents('tr').removeClass('disable')
           $(e.target).parents('tr').addClass('enable')
-          $('#' + id).val('Disable')
+          $(node).val('Disable')
   # TODO: DRY
   $('.enable-filter').click (e) ->
     if $(this).attr('data-hide') == 'show'
