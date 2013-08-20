@@ -20,20 +20,21 @@ html
             th Pattern
             th Content
         tbody
-          - for x in @osusumes
-            - if x[:enable]
-              tr.enable
-                td
-                  input.manage type="button" id=x[:name] value="Disable"
-                  td.name = x[:name]
-                  td.regexp = x[:regexp]
-                  td.content = x[:content]
-            - else
-              tr.disable
-                td
-                  input.manage type="button" id=x[:name] value="Enable"
-                  td.name = x[:name]
-                  td.regexp = x[:regexp]
-                  td.content = x[:content]
+          - if Object.const_defined?(:Osusume)
+            - for x in @osusumes
+              - if x[:enable]
+                tr.enable
+                  td
+                    input.manage type="button" id=x[:name] value="Disable"
+                    td.name = x[:name]
+                    td.regexp = x[:regexp]
+                    td.content = x[:content]
+              - else
+                tr.disable
+                  td
+                    input.manage type="button" id=x[:name] value="Enable"
+                    td.name = x[:name]
+                    td.regexp = x[:regexp]
+                    td.content = x[:content]
 
       p = "powered by #{RUBY_DESCRIPTION}"
