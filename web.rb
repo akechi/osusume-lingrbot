@@ -37,7 +37,6 @@ module Web
       m = Regexp.last_match
       name = m[1]
       regexp = m[2]
-      return unless regexp.chars[0] == '^' # TODO temporary! please remove this line after DOS attack
       content = m[3]
       item = Osusume.first_or_create({:name => name})
       content = item[:content] unless content
