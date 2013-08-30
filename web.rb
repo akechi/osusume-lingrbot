@@ -49,12 +49,14 @@ def bot_relay(bot, message)
     doc = Nokogiri::HTML.parse(f)
     doc.css('#property .left').each do |node|
       if node.text =~ /Endpoint:/
-        endpoint = URI.parse(node.next.next.text.strip)
-        Bot.create({:name => bot, :endpoint => endpoint})
+        uri = node.next.next.text.strip
+        return '' if uri == ''
+        endpoint = URI.parse(uri)
+        Bot.create({:name => bot, :endpoint => endpoint.to_s})
       end
     end
   end
-  return '' if endpoint == nil
+  return '' if endpoint == nil || endpoint == ""
   host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
   status = { "events" => [{ "message" => message }] }
   req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
