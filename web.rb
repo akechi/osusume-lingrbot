@@ -25,6 +25,8 @@ Osusume.auto_upgrade!
 
 OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
 LINGR_IP = '219.94.235.225'
+BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
+OSUSUME_NOTIFY_ROOM = 'computer_science'
 
 def urlencode(x)
   ERB::Util.url_encode x
@@ -157,9 +159,6 @@ get '/' do
   slim :index
 end
 
-BOT_VERIFIER = Digest::SHA1.hexdigest("Web.osusume#{ENV["OSUSUME_BOT_SECRET"]}")
-OSUSUME_NOTIFY_ROOM = 'computer_science'
-
 post '/manage' do
   content_type :json
   item = Osusume.first({name: params[:name]})
@@ -184,7 +183,7 @@ post '/api' do
 end
 
 post '/lingr' do
-  return unless request.env['HTTP_X_REAL_IP'] == LINGR_IP
+  return "" unless request.env['HTTP_X_REAL_IP'] == LINGR_IP
   json = JSON.parse(request.body.string)
   json["events"].
     map {|e| e['message'] }.
