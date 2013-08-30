@@ -20,8 +20,15 @@ class Osusume
     property :created_by, String, :length => 256
     property :enable, Boolean, :default => true
 end
+class Bot
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String, :unique => true
+	property :endpoint, String, :length => 256
+end
 DataMapper.finalize
 Osusume.auto_upgrade!
+Bot.auto_upgrade!
 
 OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
 LINGR_IP = '219.94.235.225'
@@ -33,21 +40,29 @@ def urlencode(x)
 end
 
 def bot_relay(bot, message)
-  f = open("http://lingr.com/bot/#{bot}").read
-  doc = Nokogiri::HTML.parse(f)
-  doc.css('#property .left').each do |node|
-    if node.text =~ /Endpoint:/
-      endpoint = URI.parse(node.next.next.text.strip)
-      host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
-      status = { "events" => [{ "message" => message }] }
-      req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
-      req.body = status.to_json
-      req.content_type = 'application/json'
-      http = Net::HTTP.new(host, endpoint.port)
-      http.start do |h|
-        return h.request(req).body
+  found = Bot.first({:name => bot})
+  endpoint = nil
+  if found
+    endpoint = found[:endpoint]
+  else
+    f = open("http://lingr.com/bot/#{bot}").read
+    doc = Nokogiri::HTML.parse(f)
+    doc.css('#property .left').each do |node|
+      if node.text =~ /Endpoint:/
+        endpoint = URI.parse(node.next.next.text.strip)
+        Bot.create({:name => bot, :endpoint => endpoint})
       end
     end
+  end
+  return '' if endpoint == nil
+  host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
+  status = { "events" => [{ "message" => message }] }
+  req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
+  req.body = status.to_json
+  req.content_type = 'application/json'
+  http = Net::HTTP.new(host, endpoint.port)
+  http.start do |h|
+    return h.request(req).body
   end
   return ''
 end
@@ -112,10 +127,11 @@ module Web
         "'#{x[:name]}' /#{x[:regexp]}/"
       }.join "\n"
     else
+      t = message['text']
       Osusume.all(:enable => true).map {|x|
         begin
-          m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(message['text'])
-        rescue
+          m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(t)
+        rescue => e
           next
         end
         next if !m
@@ -125,18 +141,19 @@ module Web
           content.gsub!("$#{x}", m[x])
         end
         content.gsub! /\$m\[('[^']*'|"[^"]*")\]/ do |x| # x isn't used...!
-          message[$1[1...-1]]
+          key = JSON.parse("[#{$1}]")[0]
+          message[key]
         end
-        content.gsub! /\$bot\(('[^']*'|"[^"]*")\s*,\s*('[^']*'|"[^"]*")\)/ do |x| # x isn't used...!
-          bot = $1[1...-1]
-          text = $2[1...-1]
+        content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*,\s*("[^"]*")\)/ do |x| # x isn't used...!
+          bots = JSON.parse("[#{$1}]").flatten
+          text = JSON.parse("[#{$2}]")[0]
           relay = message.dup
           relay["text"] = text
-          content = bot_relay(bot, relay)
+          content = bots.map {|x| bot_relay(x, relay)}.join("\n")
         end
-        content.gsub! /\$bot\(('[^']*'|"[^"]*")\s*\)/ do |x| # x isn't used...!
-          bot = $1[1...-1]
-          content = bot_relay(bot, message)
+        content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
+          bots = JSON.parse("[#{$1}]").flatten
+          content = bots.map {|x| bot_relay(x, message)}.join("\n")
         end
         content
       }.compact.sample.to_s
