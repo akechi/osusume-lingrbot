@@ -3,6 +3,7 @@ require 'bundler'
 require 'open-uri'
 require 'nokogiri'
 require 'digest/sha1'
+require 'net/http'
 require 'json'
 require 'erb'
 
