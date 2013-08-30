@@ -41,9 +41,9 @@ end
 
 def bot_relay(bot, message)
   found = Bot.first({:name => bot})
-  endpoint = nil
+  uri = ''
   if found
-    endpoint = found[:endpoint]
+    uri = found[:endpoint]
   else
     f = open("http://lingr.com/bot/#{bot}").read
     doc = Nokogiri::HTML.parse(f)
@@ -51,12 +51,12 @@ def bot_relay(bot, message)
       if node.text =~ /Endpoint:/
         uri = node.next.next.text.strip
         return '' if uri == ''
-        endpoint = URI.parse(uri)
-        Bot.create({:name => bot, :endpoint => endpoint.to_s})
+        Bot.create({:name => bot, :endpoint => uri})
       end
     end
   end
-  return '' if endpoint == nil || endpoint == ""
+  return '' if uri == ""
+  endpoint = URI.parse(uri)
   host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
   status = { "events" => [{ "message" => message }] }
   req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
