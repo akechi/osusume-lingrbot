@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'bundler'
 require 'open-uri'
+require 'nokogiri'
 require 'digest/sha1'
 require 'json'
 require 'erb'
@@ -22,12 +23,33 @@ end
 DataMapper.finalize
 Osusume.auto_upgrade!
 
+OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
+LINGR_IP = '219.94.235.225'
+
 def urlencode(x)
   ERB::Util.url_encode x
 end
 
-OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
-LINGR_IP = '219.94.235.225'
+def bot_relay(bot, message)
+  f = open("http://lingr.com/bot/#{bot}").read
+  doc = Nokogiri::HTML.parse(f)
+  doc.css('#property .left').each do |node|
+    if node.text =~ /Endpoint:/
+      endpoint = URI.parse(node.next.next.text.strip)
+      host = endpoint.host.gsub /mattn\.tonic-water\.com/, 'isokaze'
+      status = { "events" => [{ "message" => message }] }
+      req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
+      req.body = status.to_json
+      req.content_type = 'application/json'
+      http = Net::HTTP.new(host, endpoint.port)
+      http.start do |h|
+        return h.request(req).body
+      end
+    end
+  end
+  return ''
+end
+
 module Web
   module_function
   def osusume(message, from_web_p)
@@ -100,8 +122,15 @@ module Web
           content.gsub!("$!#{x}", urlencode(m[x]))
           content.gsub!("$#{x}", m[x])
         end
-        content.gsub! /\$m\[["']([^"']+)["']\]/ do |x| # x isn't used...!
-          message[$1]
+        content.gsub! /\$m\[('[^']*'|"[^"]*")\]/ do |x| # x isn't used...!
+          message[$1[1...-1]]
+        end
+        content.gsub! /\$bot\(('[^']*'|"[^"]*")\s*,\s*('[^']*'|"[^"]*")\)/ do |x| # x isn't used...!
+          bot = $1[1...-1]
+          text = $2[1...-1]
+          relay = message.dup
+          relay["text"] = text
+          content = bot_relay(bot, relay)
         end
         content
       }.compact.sample.to_s
