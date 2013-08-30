@@ -132,6 +132,10 @@ module Web
           relay["text"] = text
           content = bot_relay(bot, relay)
         end
+        content.gsub! /\$bot\(('[^']*'|"[^"]*")\s*\)/ do |x| # x isn't used...!
+          bot = $1[1...-1]
+          content = bot_relay(bot, message)
+        end
         content
       }.compact.sample.to_s
     end
