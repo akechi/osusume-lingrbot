@@ -11,7 +11,8 @@ Dir.chdir File.dirname(__FILE__)
 Bundler.require
 set :environment, :production
 
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/osusume.db")
+dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
+DataMapper::setup(:default, dsn)
 class Osusume
     include DataMapper::Resource
     property :id, Serial
