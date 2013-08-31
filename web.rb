@@ -204,7 +204,7 @@ post '/api' do
 end
 
 post '/lingr' do
-  return "" unless request.env['HTTP_X_REAL_IP'] == LINGR_IP
+  return "" unless request.ip == LINGR_IP
   json = JSON.parse(request.body.string)
   json["events"].
     map {|e| e['message'] }.
