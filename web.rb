@@ -157,7 +157,8 @@ module Web
         end
         content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
           bots = JSON.parse("[#{$1}]").flatten
-          content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
+          # content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
+          content = 'bot method without second arg'
         end
         content
       }.compact.sample.to_s
