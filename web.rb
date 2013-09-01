@@ -57,7 +57,6 @@ def bot_relay(bot, message)
       end
     end
   end
-  return "uri: #{uri}"
   return '' if uri == ""
   endpoint = URI.parse(uri)
   host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
