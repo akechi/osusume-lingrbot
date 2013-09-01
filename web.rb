@@ -153,7 +153,8 @@ module Web
           text = JSON.parse("[#{$2}]")[0]
           relay = message.dup
           relay["text"] = text
-          content = bots.map {|x| bot_relay(x, relay)}.join("\n")
+          # content = bots.map {|x| bot_relay(x, relay)}.join("\n")
+          content 'relay matched'
         end
         content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
           bots = JSON.parse("[#{$1}]").flatten
@@ -204,7 +205,7 @@ post '/api' do
 end
 
 post '/lingr' do
-  # return "" unless request.ip == LINGR_IP
+  return "" unless request.ip == LINGR_IP
   json = JSON.parse(request.body.string)
   json["events"].
     map {|e| e['message'] }.
