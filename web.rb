@@ -42,6 +42,7 @@ def urlencode(x)
 end
 
 def bot_relay(bot, message)
+  return "I am #{bot}"
   found = Bot.first({:name => bot})
   uri = ''
   if found
@@ -157,8 +158,7 @@ module Web
         end
         content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
           bots = JSON.parse("[#{$1}]").flatten
-          # content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
-          content = "message to path to bot: #{message}"
+          content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
         end
         content
       }.compact.sample.to_s
