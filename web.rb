@@ -42,7 +42,6 @@ def urlencode(x)
 end
 
 def bot_relay(bot, message)
-  return "I am #{bot}"
   found = Bot.first({:name => bot})
   uri = ''
   if found
@@ -58,6 +57,7 @@ def bot_relay(bot, message)
       end
     end
   end
+  return "uri: #{uri}"
   return '' if uri == ""
   endpoint = URI.parse(uri)
   host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
