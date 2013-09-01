@@ -155,10 +155,11 @@ module Web
           relay["text"] = text
           content = bots.map {|x| "#{x} response:\n#{bot_relay(x, relay)}"}.join("\n")
         end
+        content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*,\s*("[^"]*")\)/ do |x| # x isn't used...!
         content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
           bots = JSON.parse("[#{$1}]").flatten
           # content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
-          content = 'bot method without second arg'
+          content = "message to path to bot: #{message}"
         end
         content
       }.compact.sample.to_s
