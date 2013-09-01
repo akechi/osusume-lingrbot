@@ -154,7 +154,7 @@ module Web
           relay = message.dup
           relay["text"] = text
           # content = bots.map {|x| bot_relay(x, relay)}.join("\n")
-          content 'relay matched'
+          content = 'relay matched'
         end
         content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
           bots = JSON.parse("[#{$1}]").flatten
