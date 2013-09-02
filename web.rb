@@ -205,6 +205,11 @@ get '/log' do
   open('logs/osusume.log').read
 end
 
+get '/ping' do
+  content_type "text/plain"
+  "OK"
+end
+
 get '/' do
   @osusumes = Osusume.all.each {|x|
     x[:content] = x[:content].gsub(/</, '&lt;').gsub(/>/, '&gt;') if x[:content]
