@@ -12,6 +12,12 @@ Dir.chdir File.dirname(__FILE__)
 Bundler.require
 set :environment, :production
 
+$logger = Logger.new MultiIO.new(STDOUT, File.open('logs/osusume.log'))
+set :logging, nil
+logger.level = Logger::INFO
+logger.datetime_format = '%a %d-%m-%Y %H%M '
+set :logger, $logger
+
 dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
 DataMapper::setup(:default, dsn)
 class Osusume
@@ -37,8 +43,6 @@ OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
 LINGR_IP = '219.94.235.225'
 BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
 OSUSUME_NOTIFY_ROOM = 'computer_science'
-
-$logger = Logger.new('logs/osusume.log','weekly')
 
 def urlencode(x)
   ERB::Util.url_encode x
