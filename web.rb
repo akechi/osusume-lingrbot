@@ -50,6 +50,7 @@ def bot_relay(bot, message)
   if found
     uri = found[:endpoint]
   else
+    $logger.info("Fetching bot endpoint: #{bot}")
     f = open("http://lingr.com/bot/#{bot}").read
     doc = Nokogiri::HTML.parse(f)
     doc.css('#property .left').each do |node|
@@ -61,8 +62,8 @@ def bot_relay(bot, message)
     end
   end
   return '' if uri == ""
+  $logger.info("Relay endpoint: #{bot}")
   endpoint = URI.parse(uri)
-  $logger.info(endpoint)
   status = { "events" => [{ "message" => message }] }
   req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
   req.body = status.to_json
