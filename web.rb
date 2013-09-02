@@ -18,19 +18,23 @@ class MultiIO
   end
 
   def <<(*args)
-    @targets.each {|t| t.<<(*args); t.flush if t.methods(:flush) }
+    @targets.each {|t| t.<<(*args); t.flush }
   end
 
   def write(*args)
-    @targets.each {|t| t.write(*args); t.flush if t.methods(:flush) }
+    @targets.each {|t| t.write(*args); t.flush }
   end
 
   def puts(*args)
-    @targets.each {|t| t.write(*args); t.write("\n"); t.flush if t.methods(:flush) }
+    @targets.each {|t| t.write(*args); t.write("\n"); t.flush }
   end
 
   def close
     @targets.each(&:close)
+  end
+
+  def flush
+    @targets.each(&:flush)
   end
 end
 
