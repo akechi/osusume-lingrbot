@@ -26,10 +26,10 @@ class MultiIO
   end
 end
 
-$logger = Logger.new MultiIO.new(STDOUT, File.open('logs/osusume.log', 'a'))
 set :logging, nil
-logger.level = Logger::INFO
-logger.datetime_format = '%a %d-%m-%Y %H%M '
+$logger = Logger.new MultiIO.new(STDOUT, File.open('logs/osusume.log', 'a'))
+$logger.level = Logger::INFO
+$logger.datetime_format = '%a %d-%m-%Y %H%M '
 set :logger, $logger
 
 dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
