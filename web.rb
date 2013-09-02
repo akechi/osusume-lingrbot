@@ -182,6 +182,11 @@ get '/relay' do
   Bot.all.to_json
 end
 
+get '/log' do
+  content_type 'text/plain'
+  open('logs/osusume.log').read
+end
+
 get '/' do
   @osusumes = Osusume.all.each {|x|
     x[:content] = x[:content].gsub(/</, '&lt;').gsub(/>/, '&gt;') if x[:content]
