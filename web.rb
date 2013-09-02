@@ -17,8 +17,16 @@ class MultiIO
      @targets = targets
   end
 
+  def <<(*args)
+    @targets.each {|t| t.<<(*args); t.flush }
+  end
+
   def write(*args)
-    @targets.each {|t| t.write(*args)}
+    @targets.each {|t| t.write(*args); t.flush }
+  end
+
+  def puts(*args)
+    @targets.each {|t| t.write(*args); t.write("\n"); t.flush }
   end
 
   def close
@@ -26,11 +34,10 @@ class MultiIO
   end
 end
 
-set :logging, nil
-$logger = Logger.new MultiIO.new(STDOUT, File.open('logs/osusume.log', 'a'))
-$logger.level = Logger::INFO
-$logger.datetime_format = '%a %d-%m-%Y %H%M '
-set :logger, $logger
+$filelog = File.new("logs/osusume.log", "a+")
+$stdout = MultiIO.new($stdout, $filelog)
+$stderr = MultiIO.new($stderr, $filelog)
+set :logger, Logger.new($filelog)
 
 dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
 DataMapper::setup(:default, dsn)
