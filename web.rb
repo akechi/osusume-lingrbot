@@ -6,6 +6,7 @@ require 'digest/sha1'
 require 'net/http'
 require 'json'
 require 'erb'
+require 'logger'
 
 Dir.chdir File.dirname(__FILE__)
 Bundler.require
@@ -37,6 +38,8 @@ LINGR_IP = '219.94.235.225'
 BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
 OSUSUME_NOTIFY_ROOM = 'computer_science'
 
+$logger = Logger.new('logs/osusume.log','weekly')
+
 def urlencode(x)
   ERB::Util.url_encode x
 end
@@ -59,6 +62,7 @@ def bot_relay(bot, message)
   end
   return '' if uri == ""
   endpoint = URI.parse(uri)
+  $logger.info(endpoint)
   host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
   status = { "events" => [{ "message" => message }] }
   req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
