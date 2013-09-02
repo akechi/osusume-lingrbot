@@ -7,7 +7,7 @@ $ ->
     id = $(e.target).attr('id')
     node = document.getElementById(id)
     enable = $(node).val() == 'Enable'
-    $.ajax '/osusume/manage',
+    $.ajax '/manage',
       type: 'POST'
       data: {'name': id, 'enable': enable},
       error: (jqXHR, textStatus, errorThrown) ->
