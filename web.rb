@@ -74,6 +74,10 @@ def urlencode(x)
   ERB::Util.url_encode x
 end
 
+def notify(text)
+  open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
+end
+
 def bot_relay(bot, message)
   found = Bot.first({:name => bot})
   uri = ''
@@ -237,7 +241,7 @@ post '/manage' do
     return 'no change' if item[:enable] == enable
     item.update({enable: enable})
     text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました"
-    open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
+    notify text
     '{"status": "OK"}'
   else
     status 404
@@ -262,3 +266,5 @@ post '/lingr' do
     join.
     rstrip[0..999]
 end
+
+notify "osusume-san reloaded"
