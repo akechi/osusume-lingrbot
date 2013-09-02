@@ -63,12 +63,11 @@ def bot_relay(bot, message)
   return '' if uri == ""
   endpoint = URI.parse(uri)
   $logger.info(endpoint)
-  host = endpoint.host.gsub /.*\.tonic-water\.com/, 'isokaze'
   status = { "events" => [{ "message" => message }] }
   req = Net::HTTP::Post.new(endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
   req.body = status.to_json
   req.content_type = 'application/json'
-  http = Net::HTTP.new(host, endpoint.port)
+  http = Net::HTTP.new(endpoint.host, endpoint.port)
   http.start do |h|
     return h.request(req).body
   end
