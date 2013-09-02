@@ -12,6 +12,20 @@ Dir.chdir File.dirname(__FILE__)
 Bundler.require
 set :environment, :production
 
+class MultiIO
+  def initialize(*targets)
+     @targets = targets
+  end
+
+  def write(*args)
+    @targets.each {|t| t.write(*args)}
+  end
+
+  def close
+    @targets.each(&:close)
+  end
+end
+
 $logger = Logger.new MultiIO.new(STDOUT, File.open('logs/osusume.log'))
 set :logging, nil
 logger.level = Logger::INFO
