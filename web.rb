@@ -173,6 +173,11 @@ get '/application.js' do
   coffee :application
 end
 
+get '/relay' do
+  content_type :json
+  Bot.all.to_json
+end
+
 get '/' do
   @osusumes = Osusume.all.each {|x|
     x[:content] = x[:content].gsub(/</, '&lt;').gsub(/>/, '&gt;') if x[:content]
