@@ -37,7 +37,8 @@ end
 $filelog = File.new("logs/osusume.log", "a+")
 $stdout = MultiIO.new($stdout, $filelog)
 $stderr = MultiIO.new($stderr, $filelog)
-set :logger, Logger.new($filelog)
+$logger = Logger.new($filelog)
+set :logger, $logger
 
 dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
 DataMapper::setup(:default, dsn)
