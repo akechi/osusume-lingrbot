@@ -214,7 +214,7 @@ end
 
 get '/log' do
   content_type 'text/plain'
-  open('logs/osusume.log').read
+  open("logs/osusume.log").read.lines[-200...-1]
 end
 
 get '/ping' do
