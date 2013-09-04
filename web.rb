@@ -65,7 +65,7 @@ DataMapper.finalize
 Osusume.auto_upgrade!
 Bot.auto_upgrade!
 
-OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga]
+OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga mtroom]
 LINGR_IP = '219.94.235.225'
 BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
 OSUSUME_NOTIFY_ROOM = 'computer_science'
