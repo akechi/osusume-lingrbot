@@ -104,7 +104,8 @@ def bot_relay(bot, message)
   req.content_type = 'application/json'
   http = Net::HTTP.new(endpoint.host, endpoint.port)
   http.start do |h|
-    return h.request(req).body
+    res = h.request(req)
+    return res.body if res.code == '200'
   end
   return ''
 end
