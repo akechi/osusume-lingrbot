@@ -79,6 +79,7 @@ def notify(text)
 end
 
 def bot_relay(bot, message)
+  return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume'
   found = Bot.first({:name => bot})
   uri = ''
   if found
