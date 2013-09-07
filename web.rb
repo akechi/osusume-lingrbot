@@ -155,7 +155,7 @@ module Web
         "Matched with '#{x[:name]}'"
       }
       messages.empty? ? 'No matched' : messages.join("\n")
-    when /^!osusume!?$/
+    when /^!osusume!\?$/
       @@last_osusume
     when /^!osusume!!$/
       unless @@last_osusume.nil?
