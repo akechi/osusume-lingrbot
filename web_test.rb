@@ -12,6 +12,10 @@ describe 'The Osusume' do
     Sinatra::Application
   end
 
+  before(:all) do
+    Osusume.all.destroy
+  end
+
   context 'not find' do
     it do
       text = '!osusume shimau'
