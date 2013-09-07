@@ -156,7 +156,7 @@ module Web
       }
       messages.empty? ? 'No matched' : messages.join("\n")
     when /^!osusume!!$/
-      unless @@last_match.nil?
+      unless @@last_osusume.nil?
         item = Osusume.first({:name => @@last_osusume})
         if item
           except = (item[:except] || "").split(/,/).map{|x| x.strip} << message[:room]
