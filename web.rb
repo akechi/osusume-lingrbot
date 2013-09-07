@@ -54,7 +54,7 @@ class Osusume
     property :content, String, :length => 256
     property :created_by, String, :length => 256
     property :enable, Boolean, :default => true
-    property :rooms, String, :length => 256
+    property :except, String, :length => 256
 end
 class Bot
     include DataMapper::Resource
@@ -159,8 +159,8 @@ module Web
       unless @@last_match.nil?
         item = Osusume.first({:name => @@last_osusume})
         if item
-          rooms = (item[:rooms] || "").split(/,/).map{|x| x.strip} << message[:room]
-          item.update({:rooms => rooms.compact.join(",")}) && "Disabled '#{name} on #{message[:room]}'\n"
+          except = (item[:except] || "").split(/,/).map{|x| x.strip} << message[:room]
+          item.update({:except => except.compact.join(",")}) && "Disabled '#{name} on #{message[:room]}'\n"
         end
         
         "Not found '#{name}'\n"
@@ -185,9 +185,9 @@ module Web
     else
       t = message['text']
       Osusume.all(:enable => true).map {|x|
-        rooms = (x[:rooms] || "").split(/,/).compact.map{|x| x.strip}
-        unless rooms.empty?
-          next unless rooms.include?(x[:room])
+        except = (x[:except] || "").split(/,/).compact.map{|x| x.strip}
+        unless except.empty?
+          next unless except.include?(message[:room])
         end
 
         begin
@@ -287,4 +287,4 @@ post '/lingr' do
     rstrip[0..999]
 end
 
-notify "osusume-san reloaded"
+#notify "osusume-san reloaded"
