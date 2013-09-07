@@ -161,8 +161,8 @@ module Web
       unless @@last_osusume.nil?
         item = Osusume.first({:name => @@last_osusume})
         if item
-          except = (item[:except] || "").split(/,/).map{|x| x.strip} << message[:room]
-          item.update({:except => except.compact.join(",")}) && "Disabled '#{@@last_osusume}' on '#{message[:room]}'\n"
+          except = (item[:except] || "").split(/,/).map{|x| x.strip} << message['room']
+          item.update({:except => except.compact.join(",")}) && "Disabled '#{@@last_osusume}' on '#{message['room']}'\n"
         end
       end
     when /^!osusume!\s+(\S+)$/
@@ -287,4 +287,4 @@ post '/lingr' do
     rstrip[0..999]
 end
 
-#notify "osusume-san reloaded"
+notify "osusume-san reloaded"
