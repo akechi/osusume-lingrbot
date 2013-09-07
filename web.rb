@@ -162,7 +162,7 @@ module Web
         item = Osusume.first({:name => @@last_osusume})
         if item
           except = (item[:except] || "").split(/,/).map{|x| x.strip} << message[:room]
-          item.update({:except => except.compact.join(",")}) && "Disabled '#{name} on #{message[:room]}'\n"
+          item.update({:except => except.compact.join(",")}) && "Disabled '#{@@last_osusume}' on '#{message[:room]}'\n"
         end
       end
     when /^!osusume!\s+(\S+)$/
