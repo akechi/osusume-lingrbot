@@ -125,7 +125,7 @@ end
 module Web
   module_function
 
-  @@last_osusume
+  @@last_osusume = ""
 
   def osusume_disable(message, m)
     name = m[1]
@@ -192,31 +192,35 @@ module Web
       "Last osusume is '#{@@last_osusume}'"
     end],
 
-    [/^!osusume!!!\s+(\S+)$/, :osusume_enable_in_the_room, proc do |message, m, dummy = true|
+    [/^!osusume!!!\s+(\S+)$/, :osusume_enable_on_the_room, proc do |message, m, dummy = true|
       name = m[1]
       item = Osusume.first({:name => name})
       if item
         except = (item[:except] || "").split(/,/).map{|x| x.strip}
         except.delete(message['room'])
         item.update({:except => except.compact.join(",")}) && "Enabled '#{name}' on '#{message['room']}'\n"
+      else
+        ""
       end
     end],
 
-    [/^!osusume!!$/, :osusume_disalbe_last_in_the_room, proc do |message, m, dummy = true|
+    [/^!osusume!!$/, :osusume_disable_last_on_the_room, proc do |message, m, dummy = true|
       unless @@last_osusume.nil?
         item = Osusume.first({:name => @@last_osusume})
         if item
           except = (item[:except] || "").split(/,/).map{|x| x.strip} << message['room']
           item.update({:except => except.compact.join(",")}) && "Disabled '#{@@last_osusume}' on '#{message['room']}'\n"
+        else
+          ""
         end
       end
     end],
 
     [/^!osusume!\s+(\S+)$/, :osusume_cancel, proc do |message, m, is_from_web|
       if is_from_web
-        osusume_disable(message)
+        osusume_disable(message, m)
       else
-        osusume_destroy(message)
+        osusume_destroy(message, m)
       end
     end],
   ].each do |(regexp, method_name, proc)|
@@ -226,7 +230,11 @@ module Web
 
   def get_regexp(method_name)
     result = @@osusume_callbacks.select { |item| item[1] == method_name.to_sym }
-    result.nil? ? nil : result.first[0]
+    result.empty? ? nil : result.first[0]
+  end
+
+  def osusume_clear_last
+    @@last_osusume = ""
   end
 
   def osusume_the_greatest_hit(message)
