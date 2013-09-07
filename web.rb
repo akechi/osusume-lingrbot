@@ -195,7 +195,7 @@ module Web
       Osusume.all(:enable => true).map {|x|
         except = (x[:except] || "").split(/,/).compact.map{|x| x.strip}
         unless except.empty?
-          next unless except.include?(message['room'])
+          next if except.include?(message['room'])
         end
 
         begin
