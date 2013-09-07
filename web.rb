@@ -155,6 +155,8 @@ module Web
         "Matched with '#{x[:name]}'"
       }
       messages.empty? ? 'No matched' : messages.join("\n")
+    when /^!osusume!?$/
+      @@last_osusume
     when /^!osusume!!$/
       unless @@last_osusume.nil?
         item = Osusume.first({:name => @@last_osusume})
@@ -162,8 +164,6 @@ module Web
           except = (item[:except] || "").split(/,/).map{|x| x.strip} << message[:room]
           item.update({:except => except.compact.join(",")}) && "Disabled '#{name} on #{message[:room]}'\n"
         end
-        
-        "Not found '#{name}'\n"
       end
     when /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
