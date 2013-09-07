@@ -6,6 +6,25 @@ require 'rack/test'
 require 'json'
 
 describe 'The Osusume' do
+  before(:all) do
+    Osusume.all.destroy
+  end
+
+  describe 'finder' do
+    context 'not found' do
+      before(:all) do
+        text = '!osusume shimau'
+        @message = { "text" => text, "room" => "imascg", "nickname" => "joe" }
+        @m = Web.get_regexp(:osusume_info).match(text)
+      end
+      subject { Web.osusume_info(@message, @m) }
+      it { should be_a_kind_of(String) }
+      it { should == "Not found 'shimau'\n" }
+    end
+  end
+end
+
+describe 'The Osusume via Sinatra' do
   include Rack::Test::Methods
 
   def app
