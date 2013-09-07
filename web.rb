@@ -54,6 +54,7 @@ class Osusume
     property :content, String, :length => 256
     property :created_by, String, :length => 256
     property :enable, Boolean, :default => true
+    property :rooms, String, :length => 256
 end
 class Bot
     include DataMapper::Resource
@@ -113,6 +114,7 @@ end
 
 module Web
   module_function
+  @@last_osusume
   def osusume(message, from_web_p)
     return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
     case message['text']
@@ -153,6 +155,16 @@ module Web
         "Matched with '#{x[:name]}'"
       }
       messages.empty? ? 'No matched' : messages.join("\n")
+    when /^!osusume!!$/
+      unless @@last_match.nil?
+        item = Osusume.first({:name => @@last_osusume})
+        if item
+          rooms = (item[:rooms] || "").split(/,/).map{|x| x.strip} << message[:room]
+          item.update({:rooms => rooms.compact.join(",")}) && "Disabled '#{name} on #{message[:room]}'\n"
+        end
+        
+        "Not found '#{name}'\n"
+      end
     when /^!osusume!\s+(\S+)$/
       m = Regexp.last_match
       name = m[1]
@@ -173,12 +185,18 @@ module Web
     else
       t = message['text']
       Osusume.all(:enable => true).map {|x|
+        rooms = (x[:rooms] || "").split(/,/).compact.map{|x| x.strip}
+        unless rooms.empty?
+          next unless rooms.include?(x[:room])
+        end
+
         begin
           m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(t)
         rescue => e
           next
         end
         next if !m
+        @@last_osusume = x[:name]
         content = x[:content]
         (0...m.size).each do |x|
           content.gsub!("$!#{x}", urlencode(m[x]))
