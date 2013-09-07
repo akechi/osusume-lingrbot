@@ -162,7 +162,8 @@ module Web
       name = m[1]
       item = Osusume.first({:name => name})
       if item
-        except = (item[:except] || "").split(/,/).map{|x| x.strip}.delete(message['room'])
+        except = (item[:except] || "").split(/,/).map{|x| x.strip}
+        except.delete(message['room'])
         item.update({:except => except.compact.join(",")}) && "Enabled '#{name}' on '#{message['room']}'\n"
       end
     when /^!osusume!!$/
