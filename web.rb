@@ -157,6 +157,14 @@ module Web
       messages.empty? ? 'No matched' : messages.join("\n")
     when /^!osusume!\?$/
       @@last_osusume
+    when /^!osusume!!!\s+(\S+)$/
+      m = Regexp.last_match
+      text = m[1]
+      item = Osusume.first({:name => @@last_osusume})
+      if item
+        except = (item[:except] || "").split(/,/).map{|x| x.strip}.delete(message['room'])
+        item.update({:except => except.compact.join(",")}) && "Enabled '#{@@last_osusume}' on '#{message['room']}'\n"
+      end
     when /^!osusume!!$/
       unless @@last_osusume.nil?
         item = Osusume.first({:name => @@last_osusume})
