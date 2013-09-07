@@ -156,7 +156,7 @@ module Web
       }
       messages.empty? ? 'No matched' : messages.join("\n")
     when /^!osusume!\?$/
-      @@last_osusume
+      "Last osusume is '#{@@last_osusume}'"
     when /^!osusume!!!\s+(\S+)$/
       m = Regexp.last_match
       name = m[1]
