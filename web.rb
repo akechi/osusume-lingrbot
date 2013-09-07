@@ -10,7 +10,6 @@ require 'logger'
 
 Dir.chdir File.dirname(__FILE__)
 Bundler.require
-set :environment, :production
 
 class MultiIO
   def initialize(*targets)
@@ -220,13 +219,13 @@ module Web
         osusume_destroy(message)
       end
     end],
-  ].each do |a|
-    define_method(a[1].to_sym, a[2])
-    module_function a[1].to_sym
+  ].each do |(regexp, method_name, proc)|
+    define_method(method_name.to_sym, proc)
+    module_function method_name.to_sym
   end
 
-  def get_regexp(func_name)
-    result = @@osusume_callbacks.select { |item| item[1] == func_name.to_sym }
+  def get_regexp(method_name)
+    result = @@osusume_callbacks.select { |item| item[1] == method_name.to_sym }
     result.nil? ? nil : result.first[0]
   end
 
@@ -271,12 +270,12 @@ module Web
 
   def osusume(message, is_from_web)
     return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
-    result = @@osusume_callbacks.each do |a|
-      m = a[0].match(message['text'])
+    result = @@osusume_callbacks.each { |(regexp, method_name, proc)|
+      m = regexp.match(message['text'])
       if not m.nil?
-        break a[1].to_proc.(self, message, m, is_from_web)
+        break method_name.to_proc.(self, message, m, is_from_web)
       end
-    end
+    }
     result.is_a?(Array) ? osusume_the_greatest_hit(message) : result
   end
 end
