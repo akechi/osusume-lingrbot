@@ -44,8 +44,6 @@ $stderr = MultiIO.new($stderr, $filelog)
 $logger = Logger.new($filelog)
 set :logger, $logger
 
-dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
-DataMapper::setup(:default, dsn)
 class Osusume
     include DataMapper::Resource
     property :id, Serial
@@ -63,11 +61,24 @@ class Bot
 	property :endpoint, String, :length => 256
 end
 DataMapper.finalize
-Osusume.auto_upgrade!
-Bot.auto_upgrade!
+
+configure :production do
+  dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
+  DataMapper::setup(:default, dsn)
+  Osusume.auto_upgrade!
+  Bot.auto_upgrade!
+  LINGR_IP = '219.94.235.225'
+end
+
+configure :test, :development do
+  FileUtils.rm_rf('/tmp/osusume')
+  DataMapper.setup(:default, "yaml:///tmp/osusume")
+  Osusume.auto_upgrade!
+  Bot.auto_upgrade!
+  LINGR_IP = '127.0.0.1'
+end
 
 OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga mtroom]
-LINGR_IP = '219.94.235.225'
 BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
 OSUSUME_NOTIFY_ROOM = 'computer_science'
 
@@ -114,12 +125,31 @@ end
 
 module Web
   module_function
+
   @@last_osusume
-  def osusume(message, from_web_p)
-    return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
-    case message['text']
-    when /^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m
-      m = Regexp.last_match
+
+  def osusume_disable(message, m)
+    name = m[1]
+    item = Osusume.first({:name => name})
+    if item
+      item.update({:enable => false}) && "Deleted '#{name}'\n"
+    else
+      "Not found '#{name}'\n"
+    end
+  end
+
+  def osusume_destroy(message, m)
+    name = m[1]
+    item = Osusume.first({:name => name})
+    if item
+      item.destroy && "Deleted '#{name}'\n"
+    else
+      "Not found '#{name}'\n"
+    end
+  end
+
+  @@osusume_callbacks = [
+    [/^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m, :osusume_update, proc do |message, m, dummy = true|
       name = m[1]
       regexp = m[2]
       content = m[3]
@@ -131,8 +161,9 @@ module Web
       else
         ''
       end
-    when /^!osusume\s+(\S+)$/
-      m = Regexp.last_match
+    end],
+
+    [/^!osusume\s+(\S+)$/, :osusume_info, proc do |message, m, dummy = true|
       name = m[1]
       item = Osusume.first({:name => name, :enable => true})
       if item
@@ -142,8 +173,9 @@ module Web
       else
         "Not found '#{name}'\n"
       end
-    when /^!osusume\?\s+(.+)$/m
-      m = Regexp.last_match
+    end],
+
+    [/^!osusume\?\s+(.+)$/m, :osusume_match, proc do |message, m, dummy = true|
       text = m[1]
       messages = Osusume.all(:enable => true).select {|x|
         begin
@@ -155,10 +187,13 @@ module Web
         "Matched with '#{x[:name]}'"
       }
       messages.empty? ? 'No matched' : messages.join("\n")
-    when /^!osusume!\?$/
+    end],
+
+    [/^!osusume!\?$/, :osusume_last, proc do |message, m, dummy = true|
       "Last osusume is '#{@@last_osusume}'"
-    when /^!osusume!!!\s+(\S+)$/
-      m = Regexp.last_match
+    end],
+
+    [/^!osusume!!!\s+(\S+)$/, :osusume_enable_in_the_room, proc do |message, m, dummy = true|
       name = m[1]
       item = Osusume.first({:name => name})
       if item
@@ -166,7 +201,9 @@ module Web
         except.delete(message['room'])
         item.update({:except => except.compact.join(",")}) && "Enabled '#{name}' on '#{message['room']}'\n"
       end
-    when /^!osusume!!$/
+    end],
+
+    [/^!osusume!!$/, :osusume_disalbe_last_in_the_room, proc do |message, m, dummy = true|
       unless @@last_osusume.nil?
         item = Osusume.first({:name => @@last_osusume})
         if item
@@ -174,61 +211,68 @@ module Web
           item.update({:except => except.compact.join(",")}) && "Disabled '#{@@last_osusume}' on '#{message['room']}'\n"
         end
       end
-    when /^!osusume!\s+(\S+)$/
-      m = Regexp.last_match
-      name = m[1]
-      item = Osusume.first({:name => name})
-      if item
-        if from_web_p
-          item.update({:enable => false}) && "Deleted '#{name}'\n"
-        else
-          item.destroy && "Deleted '#{name}'\n"
-        end
-      else
-        "Not found '#{name}'\n"
-      end
-    when /^!osusume$/
-      Osusume.all(:enable => true).map {|x|
-        "'#{x[:name]}' /#{x[:regexp]}/"
-      }.join "\n"
-    else
-      t = message['text']
-      Osusume.all(:enable => true).map {|x|
-        except = (x[:except] || "").split(/,/).compact.map{|x| x.strip}
-        unless except.empty?
-          next if except.include?(message['room'])
-        end
+    end],
 
-        begin
-          m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(t)
-        rescue => e
-          next
-        end
-        next if !m
-        @@last_osusume = x[:name]
-        content = x[:content]
-        (0...m.size).each do |x|
-          content.gsub!("$!#{x}", urlencode(m[x]))
-          content.gsub!("$#{x}", m[x])
-        end
-        content.gsub! /\$m\[("[^"]*")\]/ do |x| # x isn't used...!
-          key = JSON.parse("[#{$1}]")[0]
-          message[key]
-        end
-        content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*,\s*("[^"]*")\)/ do |x| # x isn't used...!
-          bots = JSON.parse("[#{$1}]").flatten
-          text = JSON.parse("[#{$2}]")[0]
-          relay = message.dup
-          relay["text"] = text
-          content = bots.map {|x| "#{x} response:\n#{bot_relay(x, relay)}"}.join("\n")
-        end
-        content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
-          bots = JSON.parse("[#{$1}]").flatten
-          content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
-        end
-        content
-      }.compact.sample.to_s
+    [/^!osusume!\s+(\S+)$/, :osusume_cancel, proc do |message, m, is_from_web|
+      if is_from_web
+        osusume_disable(message)
+      else
+        osusume_destroy(message)
+      end
+    end],
+  ].each do |a|
+    define_method(a[1].to_sym, a[2])
+    module_function a[1].to_sym
+  end
+
+  def osusume_the_greatest_hit(message)
+    t = message['text']
+    Osusume.all(:enable => true).map {|x|
+      except = (x[:except] || "").split(/,/).compact.map{|x| x.strip}
+      unless except.empty?
+        next if except.include?(message['room'])
+      end
+
+      begin
+        m = Regexp.new(x[:regexp], Regexp::MULTILINE | Regexp::EXTENDED).match(t)
+      rescue => e
+        next
+      end
+      next if !m
+      @@last_osusume = x[:name]
+      content = x[:content]
+      (0...m.size).each do |x|
+        content.gsub!("$!#{x}", urlencode(m[x]))
+        content.gsub!("$#{x}", m[x])
+      end
+      content.gsub! /\$m\[("[^"]*")\]/ do |x| # x isn't used...!
+        key = JSON.parse("[#{$1}]")[0]
+        message[key]
+      end
+      content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*,\s*("[^"]*")\)/ do |x| # x isn't used...!
+        bots = JSON.parse("[#{$1}]").flatten
+        text = JSON.parse("[#{$2}]")[0]
+        relay = message.dup
+        relay["text"] = text
+        content = bots.map {|x| "#{x} response:\n#{bot_relay(x, relay)}"}.join("\n")
+      end
+      content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
+        bots = JSON.parse("[#{$1}]").flatten
+        content = bots.map {|x| "#{x} response:\n#{bot_relay(x, message)}"}.join("\n")
+      end
+      content
+    }.compact.sample.to_s
+  end
+
+  def osusume(message, is_from_web)
+    return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
+    result = @@osusume_callbacks.each do |a|
+      m = a[0].match(message['text'])
+      if not m.nil?
+        break a[1].to_proc.(self, message, m, is_from_web)
+      end
     end
+    result.is_a?(Array) ? osusume_the_greatest_hit(message) : result
   end
 end
 

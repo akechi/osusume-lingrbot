@@ -7,4 +7,14 @@ gem 'execjs'
 gem 'coffee-script'
 gem 'nokogiri'
 gem 'data_mapper'
-gem 'dm-postgres-adapter'
+
+group :development, :test do
+  gem 'rspec'
+  gem 'rack-test'
+  gem 'dm-yaml-adapter'
+end
+
+group :production do
+  gem 'dm-postgres-adapter'
+end
+
