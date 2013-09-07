@@ -225,6 +225,11 @@ module Web
     module_function a[1].to_sym
   end
 
+  def get_regexp(func_name)
+    result = @@osusume_callbacks.select { |item| item[1] == func_name.to_sym }
+    result.nil? ? nil : result.first[0]
+  end
+
   def osusume_the_greatest_hit(message)
     t = message['text']
     Osusume.all(:enable => true).map {|x|
