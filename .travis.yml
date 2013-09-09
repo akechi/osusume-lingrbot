@@ -1,6 +1,7 @@
 ---
 language: ruby
 before_script:
+  - bundle install
 rvm:
   - 2.0.0
 deploy:
