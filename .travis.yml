@@ -1,4 +1,12 @@
+---
 language: ruby
 rvm:
-  - "2.0.0"
-
+- 2.0.0
+deploy:
+  provider: heroku
+  app: osusume
+  api_key:
+  - secure: |-
+      EKTxHfQLm71DCNG72a94gJ6MQdh86NBNeEg3KXvuMqTuy8Vo73t9vXZJ5R0n
+      HJ9k5Yy+X32qVl17cj6wRPqwB1S/5U18hCz2ndWPCpWc6jxiOsIPUzPa3RC1
+      qKX/o7NCrExx4Npn02R2QfQpHOp+pIpkSFcbB2k0jqpmoIYqPF4=
