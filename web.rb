@@ -77,7 +77,7 @@ configure :test, :development do
   LINGR_IP = '127.0.0.1'
 end
 
-OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga mtroom]
+OSUSUME_ROOMS = %w[computer_science vim mcujm bottest3 imascg momonga mtroom sugoi]
 BOT_VERIFIER = Digest::SHA1.hexdigest("osusume#{ENV["OSUSUME_BOT_SECRET"]}")
 OSUSUME_NOTIFY_ROOM = 'computer_science'
 
