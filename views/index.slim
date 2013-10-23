@@ -14,15 +14,15 @@ table.table.table-bordered.table-condensed.osusumes
       - for x in @osusumes
         - if x[:enable]
           tr.enable
+            td.name = x[:name]
+            td.regexp = x[:regexp]
+            td.content = x[:content]
             td
-              button.btn.manage type="button" id=x[:name] Disable
-              td.name = x[:name]
-              td.regexp = x[:regexp]
-              td.content = x[:content]
+              button.btn.btn-default.manage type="button" id=x[:name] Disable
         - else
           tr.disable
+            td.name = x[:name]
+            td.regexp = x[:regexp]
+            td.content = x[:content]
             td
-              button.btn.manage type="button" id=x[:name] Enable
-              td.name = x[:name]
-              td.regexp = x[:regexp]
-              td.content = x[:content]
+              button.btn.btn-default.manage type="button" id=x[:name] Enable
