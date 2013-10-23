@@ -1,41 +1,28 @@
-doctype 5
-html
-  head
-    meta charset="UTF-8"
-    title osusume bot
-    link rel="stylesheet" href="application.css"
-    script src="http://code.jquery.com/jquery-latest.js"
-    script src="./js/jquery.lazyload.min.js"
-    script src="application.js"
-  body
-    h1 おすすめbot
-    #content
-      #filter
-        button.enable-filter data-hide="show" Toggle hiding enables
-        button.disable-filter data-hide="show" Toggle hiding disables
-      table.osusumes
-        thead
-          tr
-            th Enable
-            th Name
-            th Pattern
-            th Content
-        tbody
-          - if Object.const_defined?(:Osusume)
-            - for x in @osusumes
-              - if x[:enable]
-                tr.enable
-                  td
-                    input.manage type="button" id=x[:name] value="Disable"
-                    td.name = x[:name]
-                    td.regexp = x[:regexp]
-                    td.content = x[:content]
-              - else
-                tr.disable
-                  td
-                    input.manage type="button" id=x[:name] value="Enable"
-                    td.name = x[:name]
-                    td.regexp = x[:regexp]
-                    td.content = x[:content]
+.btn-group#filter
+  button.btn.btn-default.enable-filter type="button" data-hide="show" Toggle hiding enables
+  button.btn.btn-default.disable-filter type="button" data-hide="show" Toggle hiding disables
 
-      p = "powered by #{RUBY_DESCRIPTION}"
+table.table.table-bordered.table-condensed.osusumes
+  thead
+    tr
+      th Enable
+      th Name
+      th Pattern
+      th Content
+  tbody
+    - if Object.const_defined?(:Osusume)
+      - for x in @osusumes
+        - if x[:enable]
+          tr.enable
+            td
+              input.manage type="button" id=x[:name] value="Disable"
+              td.name = x[:name]
+              td.regexp = x[:regexp]
+              td.content = x[:content]
+        - else
+          tr.disable
+            td
+              input.manage type="button" id=x[:name] value="Enable"
+              td.name = x[:name]
+              td.regexp = x[:regexp]
+              td.content = x[:content]

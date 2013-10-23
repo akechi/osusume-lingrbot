@@ -1,0 +1,34 @@
+doctype 5
+html
+  head
+    meta charset="UTF-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+    title osusume bot
+    link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+    link rel="stylesheet" href="application.css"
+    script src="//code.jquery.com/jquery-latest.js"
+    script src="./js/jquery.lazyload.min.js"
+    script src="application.js"
+  body
+    .container
+      .navbar.navbar-default
+        .navbar-header
+          button.navbar-toggle type="button" data-toggle="collapse" data-target=".navbar-collapse"
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand href="#" おすすめbot
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a href="/" List
+            li
+              a href="/relay" BotRelay
+            li
+              a href="/log" Logs
+
+      #content
+        == yield
+
+      hr
+      p = "Powered by #{RUBY_DESCRIPTION}"
