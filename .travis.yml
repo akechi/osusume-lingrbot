@@ -14,3 +14,10 @@ deploy:
       qKX/o7NCrExx4Npn02R2QfQpHOp+pIpkSFcbB2k0jqpmoIYqPF4=
   on:
     rvm: 2.0.0
+notifications:
+  webhooks:
+    urls:
+      - http://travis-ci.herokuapp.com/computer_science
+    on_success: never
+    on_failure: always
+    on_start: false
