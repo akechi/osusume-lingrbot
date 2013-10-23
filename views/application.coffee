@@ -1,12 +1,12 @@
 $ ->
-  $('.lazy').lazyload({
-    effect: 'fadeIn',
-    effectspeed: 500
-  })
   $('.content').each (i, e) ->
     text = $(e).text().replace /\bhttps?:\/\/\S+(?:jpg|png|gif|JPG|PNG|GIF)(\b|\?\S+|$)/, (match) ->
       '<img class="osusume-image lazy" src="./img/dummy.jpg" data-original="' + match.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&apos;') + '">'
     $(e).html(text.replace(/\n/g, '<br/>'))
+  $('.lazy').lazyload({
+    effect: 'fadeIn',
+    effectspeed: 500
+  })
   $('input.manage').click (e) ->
     id = $(e.target).attr('id')
     node = document.getElementById(id)
