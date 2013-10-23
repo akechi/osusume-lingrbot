@@ -7,7 +7,7 @@ $ ->
     effect: 'fadeIn',
     effectspeed: 500
   })
-  $('input.manage').click (e) ->
+  $('button.manage').click (e) ->
     id = $(e.target).attr('id')
     node = document.getElementById(id)
     enable = $(node).val() == 'Enable'

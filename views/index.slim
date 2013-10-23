@@ -15,14 +15,14 @@ table.table.table-bordered.table-condensed.osusumes
         - if x[:enable]
           tr.enable
             td
-              input.manage type="button" id=x[:name] value="Disable"
+              button.btn.manage type="button" id=x[:name] Disable
               td.name = x[:name]
               td.regexp = x[:regexp]
               td.content = x[:content]
         - else
           tr.disable
             td
-              input.manage type="button" id=x[:name] value="Enable"
+              button.btn.manage type="button" id=x[:name] Enable
               td.name = x[:name]
               td.regexp = x[:regexp]
               td.content = x[:content]

@@ -6,7 +6,6 @@ require 'digest/sha1'
 require 'net/http'
 require 'json'
 require 'erb'
-require 'less'
 require 'logger'
 
 Dir.chdir File.dirname(__FILE__)
@@ -293,10 +292,6 @@ module Web
     }
     result.is_a?(Array) ? osusume_the_greatest_hit(message) : result
   end
-end
-
-get '/bootstrap.css' do
-  less :'less/bootstrap', :paths => ['views/less']
 end
 
 get '/application.css' do
