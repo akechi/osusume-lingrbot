@@ -3,3 +3,4 @@
 osusume.db
 Gemfile.lock
 backup
+*.log
