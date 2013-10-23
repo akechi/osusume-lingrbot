@@ -5,10 +5,10 @@
 table.table.table-bordered.table-condensed.osusumes
   thead
     tr
-      th Enable
       th Name
       th Pattern
       th Content
+      th Status
   tbody
     - if Object.const_defined?(:Osusume)
       - for x in @osusumes
