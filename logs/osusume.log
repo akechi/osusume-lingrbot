@@ -1,0 +1,43 @@
+[2013-10-23 20:11:18] INFO  WEBrick 1.3.1
+[2013-10-23 20:11:18] INFO  ruby 2.0.0 (2013-06-27) [x86_64-darwin12.4.0]
+== Sinatra/1.4.3 has taken the stage on 4567 for development with backup from WEBrick
+[2013-10-23 20:11:18] INFO  WEBrick::HTTPServer#start: pid=1344 port=4567
+127.0.0.1 - - [23/Oct/2013 20:11:42] "GET / HTTP/1.1" 200 744 0.1060
+localhost - - [23/Oct/2013:20:11:41 EIT] "GET / HTTP/1.1" 200 744
+- -> /
+127.0.0.1 - - [23/Oct/2013 20:11:42] "GET /application.css HTTP/1.1" 200 370 0.0991
+localhost - - [23/Oct/2013:20:11:42 EIT] "GET /application.css HTTP/1.1" 200 370
+http://0.0.0.0:4567/ -> /application.css
+127.0.0.1 - - [23/Oct/2013 20:11:43] "GET /js/jquery.lazyload.min.js HTTP/1.1" 200 - 0.0170
+localhost - - [23/Oct/2013:20:11:43 EIT] "GET /js/jquery.lazyload.min.js HTTP/1.1" 200 3566
+http://0.0.0.0:4567/ -> /js/jquery.lazyload.min.js
+127.0.0.1 - - [23/Oct/2013 20:11:43] "GET /application.js HTTP/1.1" 200 2039 0.7532
+localhost - - [23/Oct/2013:20:11:43 EIT] "GET /application.js HTTP/1.1" 200 2039
+http://0.0.0.0:4567/ -> /application.js
+127.0.0.1 - - [23/Oct/2013 20:11:44] "GET /favicon.ico HTTP/1.1" 200 - 0.0021
+localhost - - [23/Oct/2013:20:11:44 EIT] "GET /favicon.ico HTTP/1.1" 200 1150
+- -> /favicon.ico
+127.0.0.1 - - [23/Oct/2013 20:11:54] "GET / HTTP/1.1" 200 744 0.0381
+localhost - - [23/Oct/2013:20:11:54 EIT] "GET / HTTP/1.1" 200 744
+- -> /
+127.0.0.1 - - [23/Oct/2013 20:11:55] "GET /js/jquery.lazyload.min.js HTTP/1.1" 304 - 0.0010
+localhost - - [23/Oct/2013:20:11:55 EIT] "GET /js/jquery.lazyload.min.js HTTP/1.1" 304 0
+http://0.0.0.0:4567/ -> /js/jquery.lazyload.min.js
+127.0.0.1 - - [23/Oct/2013 20:11:55] "GET /application.css HTTP/1.1" 200 370 0.0113
+localhost - - [23/Oct/2013:20:11:55 EIT] "GET /application.css HTTP/1.1" 200 370
+http://0.0.0.0:4567/ -> /application.css
+127.0.0.1 - - [23/Oct/2013 20:11:56] "GET /application.js HTTP/1.1" 200 2039 0.6702
+localhost - - [23/Oct/2013:20:11:55 EIT] "GET /application.js HTTP/1.1" 200 2039
+http://0.0.0.0:4567/ -> /application.js
+127.0.0.1 - - [23/Oct/2013 20:12:53] "GET / HTTP/1.1" 200 744 0.0360
+localhost - - [23/Oct/2013:20:12:53 EIT] "GET / HTTP/1.1" 200 744
+- -> /
+127.0.0.1 - - [23/Oct/2013 20:12:54] "GET /js/jquery.lazyload.min.js HTTP/1.1" 304 - 0.0011
+localhost - - [23/Oct/2013:20:12:54 EIT] "GET /js/jquery.lazyload.min.js HTTP/1.1" 304 0
+http://0.0.0.0:4567/ -> /js/jquery.lazyload.min.js
+127.0.0.1 - - [23/Oct/2013 20:12:54] "GET /application.css HTTP/1.1" 200 370 0.0171
+localhost - - [23/Oct/2013:20:12:54 EIT] "GET /application.css HTTP/1.1" 200 370
+http://0.0.0.0:4567/ -> /application.css
+127.0.0.1 - - [23/Oct/2013 20:12:55] "GET /application.js HTTP/1.1" 200 2120 0.6292
+localhost - - [23/Oct/2013:20:12:54 EIT] "GET /application.js HTTP/1.1" 200 2120
+http://0.0.0.0:4567/ -> /application.js
