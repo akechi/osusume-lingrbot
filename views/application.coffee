@@ -1,6 +1,6 @@
 $ ->
   $('.content').each (i, e) ->
-    text = $(e).text().replace /\bhttps?:\/\/\S+(?:jpg|png|gif|JPG|PNG|GIF)(\b|\?\S+|$)/, (match) ->
+    text = $(e).text().replace /\bhttps?:\/\/\S+(?:jpg|png|gif|JPG|PNG|GIF)(\?[^< \t\r\n]+|$)/, (match) ->
       '<img class="osusume-image thumbnail lazy" src="./img/dummy.jpg" data-original="' + match.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&apos;') + '">'
     $(e).html(text.replace(/\n/g, '<br/>'))
   $('.lazy').lazyload({
