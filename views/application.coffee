@@ -9,7 +9,7 @@ $ ->
   })
   $('button.manage').click ->
     id = $(this).attr('id')
-    enable = $(this).val() == 'Enable'
+    enable = $(this).text() == 'Enable'
     $.ajax '/manage',
       type: 'POST'
       data: {'name': id, 'enable': enable},
@@ -19,11 +19,11 @@ $ ->
         if !enable
           $(this).parents('tr').removeClass('enable')
           $(this).parents('tr').addClass('disable')
-          $(this).val('Enable')
+          $(this).text('Enable')
         else
           $(this).parents('tr').removeClass('disable')
           $(this).parents('tr').addClass('enable')
-          $(this).val('Disable')
+          $(this).text('Disable')
   # TODO: DRY
   $('.enable-filter').click (e) ->
     if $(this).attr('data-hide') == 'show'
