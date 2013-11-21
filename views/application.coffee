@@ -8,22 +8,23 @@ $ ->
     effectspeed: 500
   })
   $('button.manage').click ->
-    id = $(this).attr('id')
-    enable = $(this).text() == 'Enable'
+    clicked = $(this)
+    enable = clicked.text() == 'Enable'
     $.ajax '/manage',
       type: 'POST'
-      data: {'name': id, 'enable': enable},
+      data: {'name': clicked.attr('id'), 'enable': enable},
       error: (jqXHR, textStatus, errorThrown) ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->
+        tr = clicked.parents('td').parents('tr')
         if !enable
-          $(this).parents('tr').removeClass('enable')
-          $(this).parents('tr').addClass('disable')
-          $(this).text('Enable')
+          tr.removeClass('enable')
+          tr.addClass('disable')
+          clicked.text('Enable')
         else
-          $(this).parents('tr').removeClass('disable')
-          $(this).parents('tr').addClass('enable')
-          $(this).text('Disable')
+          tr.removeClass('disable')
+          tr.addClass('enable')
+          clicked.text('Disable')
   # TODO: DRY
   $('.enable-filter').click (e) ->
     if $(this).attr('data-hide') == 'show'
