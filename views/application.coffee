@@ -7,10 +7,9 @@ $ ->
     effect: 'fadeIn',
     effectspeed: 500
   })
-  $('button.manage').click (e) ->
-    id = $(e.target).attr('id')
-    node = document.getElementById(id)
-    enable = $(node).val() == 'Enable'
+  $('button.manage').click ->
+    id = $(this).attr('id')
+    enable = $(this).val() == 'Enable'
     $.ajax '/manage',
       type: 'POST'
       data: {'name': id, 'enable': enable},
@@ -18,13 +17,13 @@ $ ->
         alert "AJAX Error: #{textStatus}"
       success: (data, textStatus, jqXHR) ->
         if !enable
-          $(e.target).parents('tr').removeClass('enable')
-          $(e.target).parents('tr').addClass('disable')
-          $(node).val('Enable')
+          $(this).parents('tr').removeClass('enable')
+          $(this).parents('tr').addClass('disable')
+          $(this).val('Enable')
         else
-          $(e.target).parents('tr').removeClass('disable')
-          $(e.target).parents('tr').addClass('enable')
-          $(node).val('Disable')
+          $(this).parents('tr').removeClass('disable')
+          $(this).parents('tr').addClass('enable')
+          $(this).val('Disable')
   # TODO: DRY
   $('.enable-filter').click (e) ->
     if $(this).attr('data-hide') == 'show'

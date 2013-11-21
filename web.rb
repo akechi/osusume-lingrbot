@@ -329,7 +329,7 @@ post '/manage' do
   item = Osusume.first({name: params[:name]})
   if item
     enable = params[:enable] == 'true'
-    return 'no change' if item[:enable] == enable
+    return "no change. item status:#{item[:enable]}" if item[:enable] == enable
     item.update({enable: enable})
     text = "'#{params[:name]}' がたぶんWebから#{enable ? "有効": "無効"}に変更されました"
     notify text
