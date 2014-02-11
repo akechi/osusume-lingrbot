@@ -130,7 +130,7 @@ def bot_relay(bot, message)
     $logger.info e.message
     $logger.info e.backtrace.inspect
     log_uri = "#{$web_uri}log"
-    return "An error occurd when bot relaying.\b#{log_uri}"
+    return "An error occurd when bot relaying.\n#{log_uri}"
   end
   return ''
 end
