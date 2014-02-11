@@ -42,6 +42,7 @@ $stdout = MultiIO.new($stdout, $filelog)
 $stderr = MultiIO.new($stderr, $filelog)
 $logger = Logger.new($filelog)
 set :logger, $logger
+$web_uri = ENV['OSUSUME_BASE_URI'] || "http://osusume.herokuapp.com/"
 
 class Osusume
     include DataMapper::Resource
@@ -111,13 +112,25 @@ def bot_relay(bot, message)
   endpoint = URI.parse(uri)
   $logger.info("Relay endpoint: #{endpoint}")
   status = { "events" => [{ "message" => message }] }
-  req = Net::HTTP::Post.new(endpoint.path.empty? ? "/" : endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
-  req.body = status.to_json
-  req.content_type = 'application/json'
-  http = Net::HTTP.new(endpoint.host, endpoint.port)
-  http.start do |h|
-    res = h.request(req)
-    return res.body if res.code == '200'
+  begin
+    req = Net::HTTP::Post.new(endpoint.path.empty? ? "/" : endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
+    req.body = status.to_json
+    req.content_type = 'application/json'
+    http = Net::HTTP.new(endpoint.host, endpoint.port)
+    http.start do |h|
+      res = h.request(req)
+      if res.code == '200'
+        return res.body
+      else
+        log_uri = "#{$base_uri}log"
+        return "Response code #{res.code} returned.\n#{log_uri}"
+      end
+    end
+  rescue Exception => e
+    $logger.info e.message
+    $logger.info e.backtrace.inspect
+    log_uri = "#{$base_uri}log"
+    return "An error occurd when bot relaying.\b#{log_uri}"
   end
   return ''
 end
