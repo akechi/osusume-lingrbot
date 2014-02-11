@@ -42,7 +42,7 @@ $stdout = MultiIO.new($stdout, $filelog)
 $stderr = MultiIO.new($stderr, $filelog)
 $logger = Logger.new($filelog)
 set :logger, $logger
-$web_uri = ENV['OSUSUME_web_uri'] || "http://osusume.herokuapp.com/"
+$web_uri = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
 
 class Osusume
     include DataMapper::Resource
