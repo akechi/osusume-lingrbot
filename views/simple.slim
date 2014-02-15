@@ -1,0 +1,13 @@
+table.table.table-bordered.table-condensed
+  thead
+    tr
+      th Id
+      th Name
+      th Status
+  tbody
+    - if Object.const_defined?(:Osusume)
+      - for x in @osusumes
+        tr
+          td = x[:id]
+          td = x[:name]
+          td = x[:enabled] ? 'enabled' : 'disabled'
