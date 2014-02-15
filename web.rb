@@ -330,6 +330,11 @@ get '/ping' do
   "OK"
 end
 
+get '/simple' do
+  @osusumes = Osusume.all
+  slim :simple
+end
+
 get '/' do
   @osusumes = Osusume.all.each {|x|
     x[:content] = x[:content].gsub(/</, '&lt;').gsub(/>/, '&gt;') if x[:content]
