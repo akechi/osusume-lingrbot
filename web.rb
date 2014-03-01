@@ -123,14 +123,14 @@ def bot_relay(bot, message)
         return res.body
       else
         log_uri = "#{$web_uri}log"
-        return "Response code #{res.code} returned.\n#{log_uri}"
+        return "Response code #{res.code} returned when relaying `#{endpoint}`.\n#{log_uri}"
       end
     end
   rescue Exception => e
     $logger.info e.message
     $logger.info e.backtrace.inspect
     log_uri = "#{$web_uri}log"
-    return "An error occurd when bot relaying.\n#{log_uri}"
+    return "An error occurd when relaying `#{endpoint}`\n#{log_uri}"
   end
   return ''
 end
