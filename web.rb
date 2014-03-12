@@ -116,6 +116,7 @@ def bot_relay(bot, message)
     req = Net::HTTP::Post.new(endpoint.path.empty? ? "/" : endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
     req.body = status.to_json
     req.content_type = 'application/json'
+    $logger.info(req.body)
     http = Net::HTTP.new(endpoint.host, endpoint.port)
     http.start do |h|
       res = h.request(req)
