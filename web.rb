@@ -90,6 +90,19 @@ def notify(text)
   open "http://lingr.com/api/room/say?room=#{OSUSUME_NOTIFY_ROOM}&bot=osusume&text=#{urlencode(text)}&bot_verifier=#{BOT_VERIFIER}"
 end
 
+def clear_bot_cache(bot)
+  found = Bot.first({:name => bot})
+  if found
+    if found.destroy
+      "Done."
+    else
+      "Nanka okashii..."
+    end
+  else
+    "There are no #{bot} in db."
+  end
+end
+
 def bot_relay(bot, message)
   return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume'
   found = Bot.first({:name => bot})
@@ -161,6 +174,11 @@ module Web
   end
 
   @@osusume_callbacks = [
+    [/^!osusume-clear-bot\s+(\S+)$/, :osusume_last, proc do |message, m, dummy = true|
+      bot = m[1]
+      clear_bot_cache(bot)
+    end],
+
     [/^!osusume\s+(\S+)\s+(\S+)(?:\s+(.+))?$/m, :osusume_update, proc do |message, m, dummy = true|
       name = m[1]
       regexp = m[2]
