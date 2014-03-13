@@ -174,7 +174,7 @@ module Web
   end
 
   @@osusume_callbacks = [
-    [/^!osusume-clear-bot\s+(\S+)$/, :osusume_last, proc do |message, m, dummy = true|
+    [/^!osusume-clear-bot\s+(\S+)$/, :osusume_clear_bot, proc do |message, m, dummy = true|
       bot = m[1]
       clear_bot_cache(bot)
     end],
