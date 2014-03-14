@@ -199,7 +199,9 @@ module Web
       if item
         "Name: #{item[:name]}\n" +
         "Regexp: /#{item[:regexp]}/\n" +
-        "Content: #{item[:content]}\n"
+        "Content: #{item[:content]}\n" +
+        "Full definition:\n" +
+        "!osusume #{item[:name]} #{item[:regexp]} #{item[:content]}"
       else
         "Not found '#{name}'\n"
       end
