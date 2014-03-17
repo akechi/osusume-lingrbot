@@ -54,7 +54,7 @@ describe 'The Osusume' do
       end
       subject { Web.osusume_info(@message, @m) }
       it { should be_a_kind_of(String) }
-      it { should == "Name: shimau\nRegexp: /(?<!でし)(?<!てし)(?<!ち)(?<!か)(?<!のた)まう([っ〜ー]*([。．.！!]|$)|[っ〜ー]{2,})/\nContent: http://shimau.jpg\n" }
+      it { should == "Name: shimau\nRegexp: /(?<!でし)(?<!てし)(?<!ち)(?<!か)(?<!のた)まう([っ〜ー]*([。．.！!]|$)|[っ〜ー]{2,})/\nContent: http://shimau.jpg\nFull definition:\n!osusume shimau (?<!でし)(?<!てし)(?<!ち)(?<!か)(?<!のた)まう([っ〜ー]*([。．.！!]|$)|[っ〜ー]{2,}) http://shimau.jpg" }
     end
   end
 
