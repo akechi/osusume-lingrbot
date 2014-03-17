@@ -259,7 +259,11 @@ describe 'The Osusume via Sinatra' do
       body = { "events" => [ { "message" => { "text" => text, "room" => "imascg", "nickname" => "joe" } } ] }
       post '/lingr', body.to_json.to_s
       last_response.should be_ok
-      last_response.body.should == "Name: shimau\nRegexp: /(?<!でし)(?<!てし)(?<!ち)(?<!か)(?<!のた)まう([っ〜ー]*([。．.！!]|$)|[っ〜ー]{2,})/\nContent: http://shimau.jpg"
+      last_response.body.should == "Name: shimau\n" +
+        "Regexp: /(?<!でし)(?<!てし)(?<!ち)(?<!か)(?<!のた)まう([っ〜ー]*([。．.！!]|$)|[っ〜ー]{2,})/\n" +
+        "Content: http://shimau.jpg\n" +
+        "Full definition:\n" +
+        "!osusume shimau (?<!でし)(?<!てし)(?<!ち)(?<!か)(?<!のた)まう([っ〜ー]*([。．.！!]|$)|[っ〜ー]{2,}) http://shimau.jpg"
     end
   end
 
