@@ -287,8 +287,10 @@ module Web
       @@last_osusume = x[:name]
       content = x[:content]
       (0...m.size).each do |x|
-        content.gsub!("$!#{x}", urlencode(m[x]))
-        content.gsub!("$#{x}", m[x])
+        if m[x]
+          content.gsub!("$!#{x}", urlencode(m[x]))
+          content.gsub!("$#{x}", m[x])
+        end
       end
       content.gsub! /\$m\[("[^"]*")\]/ do |x| # x isn't used...!
         key = JSON.parse("[#{$1}]")[0]
