@@ -9,6 +9,7 @@ gem 'execjs'
 gem 'coffee-script'
 gem 'nokogiri'
 gem 'data_mapper'
+gem 'therubyracer'
 
 group :development, :test do
   gem 'rspec'
