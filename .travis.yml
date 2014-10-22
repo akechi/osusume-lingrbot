@@ -1,5 +1,7 @@
 ---
 language: ruby
+addons:
+  postgresql: "9.3"
 before_script:
   - bundle install
 rvm:
