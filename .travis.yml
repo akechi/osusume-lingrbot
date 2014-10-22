@@ -1,9 +1,6 @@
 ---
 language: ruby
-addons:
-  postgresql: "9.3"
-before_script:
-  - bundle install
+bundler_args: --without production
 rvm:
   - 2.0.0
 deploy:
