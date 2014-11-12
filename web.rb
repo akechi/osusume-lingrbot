@@ -389,9 +389,8 @@ end
 
 post '/realvimtutor' do
   content_type :json
-  result = Web.osusume({"text"=> "#{params[:user]} < Help me, Real Vimtutors!!!"}, true)
-  open "http://lingr.com/api/room/say?room=vim&bot=osusume&text=#{urlencode("#{params[:text].inspect} => #{result.inspect} from #{request.env['HTTP_X_REAL_IP']}")}&bot_verifier=#{BOT_VERIFIER}"
-  {osusume: "#{result}"}.to_json
+  open "http://lingr.com/api/room/say?room=vim&bot=osusume&text=#{urlencode("#{params[:user]} < Help me, Real Vimtutors!!!")}&bot_verifier=#{BOT_VERIFIER}"
+  "ok"
 end
 
 post '/lingr' do
