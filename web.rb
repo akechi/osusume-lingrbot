@@ -285,7 +285,7 @@ module Web
       end
       next if !m
       @@last_osusume = x[:name]
-      content = x[:content]
+      content = x[:content] || ''
       (0...m.size).each do |x|
         if m[x]
           content.gsub!("$!#{x}", urlencode(m[x]))
