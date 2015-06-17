@@ -393,6 +393,16 @@ post '/realvimtutor' do
   "ok"
 end
 
+post '/v1/slack/inbound' do
+  result = Web.osusume({"text"=> params[:text]}, true)
+  if result
+    content_type :json
+    {channel: params[:channel_id], text: result, parse: "full" }
+  else
+    ""
+  end
+end
+
 post '/lingr' do
   return "" unless request.ip == LINGR_IP
   json = JSON.parse(request.body.string)
