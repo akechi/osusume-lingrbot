@@ -394,6 +394,7 @@ post '/realvimtutor' do
 end
 
 post '/v1/slack/inbound' do
+  $logger.info(params[:text])
   result = Web.osusume({"text"=> params[:text]}, true)
   if result
     content_type :json
