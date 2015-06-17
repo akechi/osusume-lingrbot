@@ -397,8 +397,7 @@ post '/v1/slack/inbound' do
   result = Web.osusume({"text"=> params[:text]}, true)
   if result
     content_type :json
-    result = result.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
-    {channel: params[:channel_id], text: result, parse: "full" }.to_json
+    {channel: params[:channel_id], text: result.force_encoding("UTF-8"), parse: "full" }.to_json
   else
     ""
   end
