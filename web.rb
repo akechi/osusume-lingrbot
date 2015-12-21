@@ -313,6 +313,9 @@ module Web
           response.split.empty? ? "" : "#{b} response:\n#{response}"
         }.select{|r| not r.empty?}.join("\n")
       end
+      content.gsub! /\$url\(\s*"([^"]*)"\s*\)/ do |x| # x isn't used...!
+        content = open($1).read
+      end
       content.gsub! /\$url\(\s*"([^"]*)"\s*,\s*"([^"]*)"\s*\)/ do |x| # x isn't used...!
         content = Nokogiri::HTML.parse(open($1).read).css($2).map(&:text).join("\n")
       end
