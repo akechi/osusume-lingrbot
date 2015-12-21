@@ -13,7 +13,7 @@ Bundler.require
 
 class MultiIO
   def initialize(*targets)
-     @targets = targets
+    @targets = targets
   end
 
   def <<(*args)
