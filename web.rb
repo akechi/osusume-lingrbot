@@ -37,10 +37,10 @@ class MultiIO
   end
 end
 
-$filelog = File.new("logs/osusume.log", "a+")
-$stdout = MultiIO.new($stdout, $filelog)
-$stderr = MultiIO.new($stderr, $filelog)
-$logger = Logger.new($filelog)
+filelog = File.new("logs/osusume.log", "a+")
+$stdout = MultiIO.new($stdout, filelog)
+$stderr = MultiIO.new($stderr, filelog)
+$logger = Logger.new(filelog)
 set :logger, $logger
 $web_uri = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
 
