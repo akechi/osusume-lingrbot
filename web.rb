@@ -420,7 +420,7 @@ post '/lingr' do
     compact.
     map {|message|
       result = "#{Web.osusume(message, false)}"
-      notify("Registered [#{message['text']}] at #{message.inspect}") if result
+      # notify("Registered [#{message['text']}] at #{message.inspect}") if result
       result
     }.
     join.
