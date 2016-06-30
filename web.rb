@@ -416,11 +416,11 @@ post '/lingr' do
   return "" unless request.ip == LINGR_IP
   json = JSON.parse(request.body.string)
   json["events"].
-    map {|e| [e, e['message']] }.
-    select {|_, x| x }.
-    map {|e, message|
+    map {|e| e['message'] }.
+    compact.
+    map {|message|
       result = "#{Web.osusume(message, false)}"
-      notify("Registered [#{message}] at #{e.inspect}")
+      notify("Registered [#{message['text']}] at #{message.inspect}") if result
       result
     }.
     join.
