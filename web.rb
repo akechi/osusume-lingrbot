@@ -421,4 +421,4 @@ post '/lingr' do
     rstrip[0..999]
 end
 
-notify "osusume-san reloaded"
+# notify "osusume-san reloaded"
