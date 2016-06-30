@@ -323,6 +323,7 @@ module Web
     }.compact.sample.to_s
   end
 
+  # TODO document what does it return
   def osusume(message, is_from_web)
     return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
     result = @@osusume_callbacks.each { |(regexp, method_name, proc)|
@@ -403,6 +404,7 @@ post '/v1/slack/inbound' do
   return "" if params[:user_name] == "slackbot"
   result = Web.osusume({"text"=> params[:text]}, true)
   if result
+    notify("Registered [#{params[:text]}] at #{params.inspect}")
     content_type :json
     {channel: params[:channel_id], text: result.force_encoding("UTF-8"), parse: "full" }.to_json
   else
@@ -414,9 +416,13 @@ post '/lingr' do
   return "" unless request.ip == LINGR_IP
   json = JSON.parse(request.body.string)
   json["events"].
-    map {|e| e['message'] }.
-    compact.
-    map {|x| "#{Web.osusume(x, false)}" }.
+    map {|e| [e, e['message']] }.
+    select {|_, x| x }.
+    map {|e, message|
+      result = "#{Web.osusume(message, false)}"
+      notify("Registered [#{message}] at #{e.inspect}")
+      result
+    }.
     join.
     rstrip[0..999]
 end
