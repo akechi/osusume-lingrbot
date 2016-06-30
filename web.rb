@@ -187,6 +187,7 @@ module Web
       content = item[:content] unless content
       created_by = item[:created_by] || message['nickname']
       if item.update({:regexp => regexp, :content => content, :created_by => created_by, :enable => true})
+        notify("Registered/updated '#{name}' at #{message}")
         "Updated '#{name}'\n"
       else
         ''
@@ -326,12 +327,12 @@ module Web
   # TODO document what does it return
   def osusume(message, is_from_web)
     return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
-    @@osusume_callbacks.each { |(regexp, method_name, proc)|
+    @@osusume_callbacks.each do |(regexp, method_name, proc)|
       m = regexp.match(message['text'])
       if not m.nil?
         return method_name.to_proc.(self, message, m, is_from_web)
       end
-    }
+    end
     osusume_the_greatest_hit(message)
   end
 end
@@ -402,9 +403,8 @@ end
 
 post '/v1/slack/inbound' do
   return "" if params[:user_name] == "slackbot"
-  result = Web.osusume({"text"=> params[:text]}, true)
+  result = Web.osusume(params.merge({"text" => params[:text]}), true)
   if result
-    notify("Registered [#{params[:text]}] at #{params.inspect}")
     content_type :json
     {channel: params[:channel_id], text: result.force_encoding("UTF-8"), parse: "full" }.to_json
   else
@@ -418,11 +418,7 @@ post '/lingr' do
   json["events"].
     map {|e| e['message'] }.
     compact.
-    map {|message|
-      result = "#{Web.osusume(message, false)}"
-      # notify("Registered [#{message['text']}] at #{message.inspect}") if result
-      result
-    }.
+    map {|message| "#{Web.osusume(message, false)}" }.
     join.
     rstrip[0..999]
 end
