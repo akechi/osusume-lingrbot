@@ -42,7 +42,7 @@ $stdout = MultiIO.new($stdout, filelog)
 $stderr = MultiIO.new($stderr, filelog)
 $logger = Logger.new(filelog)
 set :logger, $logger
-$web_uri = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
+WEB_URI = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
 
 class Osusume
   include DataMapper::Resource
@@ -103,7 +103,7 @@ def clear_bot_cache(bot)
   end
 end
 
-def bot_relay(bot, message)
+def bot_relay(bot, message, web_ui)
   return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume' && message.empty?
   found = Bot.first({:name => bot})
   uri = ''
@@ -135,14 +135,14 @@ def bot_relay(bot, message)
       if res.code == '200'
         return res.body
       else
-        log_uri = "#{$web_uri}log"
+        log_uri = "#{WEB_URI}log"
         return "Response code #{res.code} returned when relaying `#{endpoint}`.\n#{log_uri}"
       end
     end
   rescue Exception => e
     $logger.info e.message
     $logger.info e.backtrace.inspect
-    log_uri = "#{$web_uri}log"
+    log_uri = "#{WEB_URI}log"
     return "An error occurd when relaying `#{endpoint}`\n#{log_uri}"
   end
   return ''
