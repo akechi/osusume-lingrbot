@@ -326,13 +326,13 @@ module Web
   # TODO document what does it return
   def osusume(message, is_from_web)
     return if message['room'] && !OSUSUME_ROOMS.include?(message['room'])
-    result = @@osusume_callbacks.each { |(regexp, method_name, proc)|
+    @@osusume_callbacks.each { |(regexp, method_name, proc)|
       m = regexp.match(message['text'])
       if not m.nil?
-        break method_name.to_proc.(self, message, m, is_from_web)
+        return method_name.to_proc.(self, message, m, is_from_web)
       end
     }
-    result.is_a?(Array) ? osusume_the_greatest_hit(message) : result
+    osusume_the_greatest_hit(message)
   end
 end
 
