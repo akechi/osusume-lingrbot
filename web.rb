@@ -45,20 +45,20 @@ set :logger, $logger
 $web_uri = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
 
 class Osusume
-    include DataMapper::Resource
-    property :id, Serial
-    property :name, String, :unique => true
-    property :regexp, String, :length => 256
-    property :content, String, :length => 256
-    property :created_by, String, :length => 256
-    property :enable, Boolean, :default => true
-    property :except, String, :length => 256
+  include DataMapper::Resource
+  property :id, Serial
+  property :name, String, :unique => true
+  property :regexp, String, :length => 256
+  property :content, String, :length => 256
+  property :created_by, String, :length => 256
+  property :enable, Boolean, :default => true
+  property :except, String, :length => 256
 end
 class Bot
-    include DataMapper::Resource
-    property :id, Serial
-    property :name, String, :unique => true
-	property :endpoint, String, :length => 256
+  include DataMapper::Resource
+  property :id, Serial
+  property :name, String, :unique => true
+  property :endpoint, String, :length => 256
 end
 DataMapper.finalize
 
