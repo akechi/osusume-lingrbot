@@ -174,6 +174,11 @@ module Web
   end
 
   @@osusume_callbacks = [
+    [/^!osusume-shutdown$/, :osusume_shutdown, proc do |message, m, dummy = true|
+      notify("Exiting... (#{message['room']})")
+      exit
+    end],
+
     [/^!osusume-clear-bot\s+(\S+)$/, :osusume_clear_bot, proc do |message, m, dummy = true|
       bot = m[1]
       clear_bot_cache(bot)
