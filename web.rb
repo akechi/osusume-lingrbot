@@ -352,7 +352,7 @@ end
 
 get '/log' do
   content_type 'text/plain'
-  open("logs/osusume.log").read.lines.reverse[0...200].reverse
+  open("logs/osusume.log").read.lines.last[200].reverse
 end
 
 get '/ping' do
