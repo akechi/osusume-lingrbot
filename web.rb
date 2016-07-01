@@ -103,7 +103,7 @@ def clear_bot_cache(bot)
   end
 end
 
-def bot_relay(bot, message, web_ui)
+def bot_relay(bot, message)
   return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume' && message.empty?
   found = Bot.first({:name => bot})
   uri = ''
