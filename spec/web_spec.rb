@@ -209,6 +209,50 @@ describe 'The Osusume' do
       it { should == "http://shimau.jpg" }
     end
   end
+
+  describe 'bot relay' do
+    context 'new' do
+      before(:all) do
+        text = '!osusume relay-RubyBot ^!cruby\s.+ $bot("RubyBot")'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+        @m = Web.get_regexp(:osusume_update).match(text)
+      end
+      subject { Web.osusume_update(@message, @m) }
+      it { should be_a_kind_of(String) }
+      it { should == "Updated 'relay-RubyBot'\n" }
+    end
+
+    context 'new with default message' do
+      before(:all) do
+        text = '!osusume cruby-exec ^!cruby-exec\s+(.*) $bot("RubyBot", "!cruby `$1 2>&1`")'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+        @m = Web.get_regexp(:osusume_update).match(text)
+      end
+      subject { Web.osusume_update(@message, @m) }
+      it { should be_a_kind_of(String) }
+      it { should == "Updated 'cruby-exec'\n" }
+    end
+
+    context 'found' do
+      before(:all) do
+        text = '!cruby 2 + 3'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+      end
+      subject { Web.osusume_the_greatest_hit(@message) }
+      it { should be_a_kind_of(String) }
+      it { should == "RubyBot response:\n5" }
+    end
+
+    context 'found with default message' do
+      before(:all) do
+        text = '!cruby-exec ls | sort | head'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+      end
+      subject { Web.osusume_the_greatest_hit(@message) }
+      it { should be_a_kind_of(String) }
+      it { should start_with "RubyBot response:\nbin" }
+    end
+  end
 end
 
 describe 'The Osusume via Sinatra' do
