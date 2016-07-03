@@ -192,7 +192,6 @@ module Web
       content = item[:content] unless content
       created_by = item[:created_by] || message['nickname']
       if item.update({:regexp => regexp, :content => content, :created_by => created_by, :enable => true})
-        notify("Registered/updated '#{name}' at #{message}")
         "Updated '#{name}'\n"
       else
         ''
