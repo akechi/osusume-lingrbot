@@ -253,6 +253,50 @@ describe 'The Osusume' do
       it { should start_with "RubyBot response:\nbin" }
     end
   end
+
+  describe 'URL' do
+    context 'new' do
+      before(:all) do
+        text = '!osusume vimpatch74 ^!vimpatch\s7\.4\.(\d+)$  $url("http://ftp.vim.org/vim/patches/7.4/7.4.$!1")'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+        @m = Web.get_regexp(:osusume_update).match(text)
+      end
+      subject { Web.osusume_update(@message, @m) }
+      it { should be_a_kind_of(String) }
+      it { should == "Updated 'vimpatch74'\n" }
+    end
+
+    context 'new with CSS selector' do
+      before(:all) do
+        text = '!osusume osusume-wiki ^!osusume-wiki$ $url("https://github.com/akechi/osusume-lingrbot/wiki",".markdown-body")'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+        @m = Web.get_regexp(:osusume_update).match(text)
+      end
+      subject { Web.osusume_update(@message, @m) }
+      it { should be_a_kind_of(String) }
+      it { should == "Updated 'osusume-wiki'\n" }
+    end
+
+    context 'found' do
+      before(:all) do
+        text = '!vimpatch 7.4.005'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+      end
+      subject { Web.osusume_the_greatest_hit(@message) }
+      it { should be_a_kind_of(String) }
+      it { should start_with "To: vim_dev@googlegroups.com\nSubject: Patch 7.4.005" }
+    end
+
+    context 'found with CSS selector' do
+      before(:all) do
+        text = '!osusume-wiki'
+        @message = { "text" => text, "room" => "computer_science", "nickname" => "joe" }
+      end
+      subject { Web.osusume_the_greatest_hit(@message) }
+      it { should be_a_kind_of(String) }
+      it { should =~ /^\n\s+\nおすすめさんの編集方法/ }
+    end
+  end
 end
 
 describe 'The Osusume via Sinatra' do
