@@ -2,7 +2,7 @@
 language: ruby
 bundler_args: --without production
 rvm:
-  - 2.0.0
+  - 2.3.0
 deploy:
   provider: heroku
   app: osusume
@@ -12,7 +12,7 @@ deploy:
       HJ9k5Yy+X32qVl17cj6wRPqwB1S/5U18hCz2ndWPCpWc6jxiOsIPUzPa3RC1
       qKX/o7NCrExx4Npn02R2QfQpHOp+pIpkSFcbB2k0jqpmoIYqPF4=
   on:
-    rvm: 2.0.0
+    rvm: 2.3.0
 notifications:
   webhooks:
     urls:
