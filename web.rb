@@ -192,7 +192,6 @@ module Web
       content = item[:content] unless content
       created_by = item[:created_by] || message['nickname']
       if item.update({:regexp => regexp, :content => content, :created_by => created_by, :enable => true})
-        notify("Registered/updated '#{name}' at #{message}")
         "Updated '#{name}'\n"
       else
         ''
@@ -276,6 +275,37 @@ module Web
     @@last_osusume = ""
   end
 
+  def soelim(message, content)
+    content.gsub! /\$m\[("[^"]*")\]/ do |x| # x isn't used...!
+      key = JSON.parse("[#{$1}]")[0]
+      message[key]
+    end
+    content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*,\s*("[^"]*")\)/ do |x| # x isn't used...!
+      bots = JSON.parse("[#{$1}]").flatten
+      text = JSON.parse("[#{$2}]")[0]
+      relay = message.dup
+      relay["text"] = text
+      content = bots.map { |b|
+        response = bot_relay(b, relay)
+        response.split.empty? ? "" : "#{b} response:\n#{response}"
+      }.select{|r| not r.empty?}.join("\n")
+    end
+    content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
+      bots = JSON.parse("[#{$1}]").flatten
+      content = bots.map { |b|
+        response = bot_relay(b, message)
+        response.split.empty? ? "" : "#{b} response:\n#{response}"
+      }.select{|r| not r.empty?}.join("\n")
+    end
+    content.gsub! /\$url\(\s*"([^"]*)"\s*\)/ do |x| # x isn't used...!
+      response = open($1).read
+    end
+    content.gsub! /\$url\(\s*"([^"]*)"\s*,\s*"([^"]*)"\s*\)/ do |x| # x isn't used...!
+      response = Nokogiri::HTML.parse(open($1).read).css($2).map(&:text).join("\n")
+    end
+    content
+  end
+
   def osusume_the_greatest_hit(message)
     t = message['text']
     Osusume.all(:enable => true).map {|x|
@@ -298,34 +328,7 @@ module Web
           content.gsub!("$#{x}", m[x])
         end
       end
-      content.gsub! /\$m\[("[^"]*")\]/ do |x| # x isn't used...!
-        key = JSON.parse("[#{$1}]")[0]
-        message[key]
-      end
-      content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*,\s*("[^"]*")\)/ do |x| # x isn't used...!
-        bots = JSON.parse("[#{$1}]").flatten
-        text = JSON.parse("[#{$2}]")[0]
-        relay = message.dup
-        relay["text"] = text
-        content = bots.map { |b|
-          response = bot_relay(b, relay)
-          response.split.empty? ? "" : "#{b} response:\n#{response}"
-        }.select{|r| not r.empty?}.join("\n")
-      end
-      content.gsub! /\$bot\(\s*("[^"]*"|\[(?:\s*(?:"[^"]*")\s*,)*(?:"[^"]*")\])\s*\)/ do |x| # x isn't used...!
-        bots = JSON.parse("[#{$1}]").flatten
-        content = bots.map { |b|
-          response = bot_relay(b, message)
-          response.split.empty? ? "" : "#{b} response:\n#{response}"
-        }.select{|r| not r.empty?}.join("\n")
-      end
-      content.gsub! /\$url\(\s*"([^"]*)"\s*\)/ do |x| # x isn't used...!
-        response = open($1).read
-      end
-      content.gsub! /\$url\(\s*"([^"]*)"\s*,\s*"([^"]*)"\s*\)/ do |x| # x isn't used...!
-        response = Nokogiri::HTML.parse(open($1).read).css($2).map(&:text).join("\n")
-      end
-      content
+      soelim(message, content)
     }.compact.sample.to_s
   end
 
