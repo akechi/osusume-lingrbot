@@ -484,5 +484,89 @@ describe 'The Osusume via Sinatra' do
       last_response.body.should == "http://shimau.jpg"
     end
   end
+
+  describe 'bot relay' do
+    context 'new' do
+      it do
+        text = '!osusume relay-RubyBot ^!cruby\s.+ $bot("RubyBot")'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should == "Updated 'relay-RubyBot'"
+      end
+    end
+
+    context 'new with default message' do
+      it do
+        text = '!osusume cruby-exec ^!cruby-exec\s+(.*) $bot("RubyBot", "!cruby `$1 2>&1`")'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should == "Updated 'cruby-exec'"
+      end
+    end
+
+    context 'found' do
+      it do
+        text = '!cruby 2 + 3'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should == "RubyBot response:\n5"
+      end
+    end
+
+    context 'found with default message' do
+      it do
+        text = '!cruby-exec ls | sort | head'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should start_with "RubyBot response:\nbin"
+      end
+    end
+  end
+
+  describe 'URL' do
+    context 'new' do
+      it do
+        text = '!osusume vimpatch74 ^!vimpatch\s7\.4\.(\d+)$  $url("http://ftp.vim.org/vim/patches/7.4/7.4.$!1")'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should == "Updated 'vimpatch74'"
+      end
+    end
+
+    context 'new with CSS selector' do
+      it do
+        text = '!osusume osusume-wiki ^!osusume-wiki$ $url("https://github.com/akechi/osusume-lingrbot/wiki",".markdown-body")'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should == "Updated 'osusume-wiki'"
+      end
+    end
+
+    context 'found' do
+      it do
+        text = '!vimpatch 7.4.005'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should start_with "To: vim_dev@googlegroups.com\nSubject: Patch 7.4.005"
+      end
+    end
+
+    context 'found with CSS selector' do
+      it do
+        text = '!osusume-wiki'
+        body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
+        post '/lingr', body.to_json.to_s
+        last_response.should be_ok
+        last_response.body.should =~ /^\n\s+\nおすすめさんの編集方法/
+      end
+    end
+  end
 end
 
