@@ -360,7 +360,7 @@ end
 
 get '/log' do
   content_type 'text/plain'
-  File.read("logs/osusume.log").lines
+  File.read(filelog.path).lines
 end
 
 get '/ping' do
