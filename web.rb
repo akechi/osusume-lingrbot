@@ -113,12 +113,14 @@ def bot_relay(bot, message)
       LOGGER.info("Fetching bot endpoint: #{bot}")
       f = open("http://lingr.com/bot/#{bot}").read
       doc = Nokogiri::HTML.parse(f)
-      uri = ''
-      doc.css('#property .left').each do |node|
+      doc.css('#property .left').inject('') do |uri, node|
         if /Endpoint:/ =~ node.text
           uri = node.next.next.text.strip
           return '' if uri == ''
           Bot.create({:name => bot, :endpoint => uri})
+          uri
+        else
+          uri
         end
       end
       uri
