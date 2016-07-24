@@ -106,21 +106,23 @@ end
 def bot_relay(bot, message)
   return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume' && message.empty?
   found = Bot.first({:name => bot})
-  uri = ''
-  if found
-    uri = found[:endpoint]
-  else
-    LOGGER.info("Fetching bot endpoint: #{bot}")
-    f = open("http://lingr.com/bot/#{bot}").read
-    doc = Nokogiri::HTML.parse(f)
-    doc.css('#property .left').each do |node|
-      if node.text =~ /Endpoint:/
-        uri = node.next.next.text.strip
-        return '' if uri == ''
-        Bot.create({:name => bot, :endpoint => uri})
+  uri =
+    if found
+      found[:endpoint]
+    else
+      LOGGER.info("Fetching bot endpoint: #{bot}")
+      f = open("http://lingr.com/bot/#{bot}").read
+      doc = Nokogiri::HTML.parse(f)
+      uri = ''
+      doc.css('#property .left').each do |node|
+        if node.text =~ /Endpoint:/
+          uri = node.next.next.text.strip
+          return '' if uri == ''
+          Bot.create({:name => bot, :endpoint => uri})
+        end
       end
+      uri
     end
-  end
   return '' if uri == ""
   endpoint = URI.parse(uri)
   LOGGER.info("Relay endpoint: #{endpoint}")
