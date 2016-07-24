@@ -40,8 +40,8 @@ end
 filelog = File.new("logs/osusume.log", "a+")
 $stdout = MultiIO.new($stdout, filelog)
 $stderr = MultiIO.new($stderr, filelog)
-$logger = Logger.new(filelog)
-set :logger, $logger
+LOGGER = Logger.new(filelog)
+set :logger, LOGGER
 WEB_URI = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
 
 class Osusume
@@ -110,7 +110,7 @@ def bot_relay(bot, message)
   if found
     uri = found[:endpoint]
   else
-    $logger.info("Fetching bot endpoint: #{bot}")
+    LOGGER.info("Fetching bot endpoint: #{bot}")
     f = open("http://lingr.com/bot/#{bot}").read
     doc = Nokogiri::HTML.parse(f)
     doc.css('#property .left').each do |node|
@@ -123,7 +123,7 @@ def bot_relay(bot, message)
   end
   return '' if uri == ""
   endpoint = URI.parse(uri)
-  $logger.info("Relay endpoint: #{endpoint}")
+  LOGGER.info("Relay endpoint: #{endpoint}")
   status = { "events" => [{ "message" => message }] }
   begin
     req = Net::HTTP::Post.new(endpoint.path.empty? ? "/" : endpoint.path, initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
@@ -140,8 +140,8 @@ def bot_relay(bot, message)
       end
     end
   rescue Exception => e
-    $logger.info e.message
-    $logger.info e.backtrace.inspect
+    LOGGER.info e.message
+    LOGGER.info e.backtrace.inspect
     log_uri = "#{WEB_URI}log"
     return "An error occurd when relaying `#{endpoint}`\n#{log_uri}"
   end
