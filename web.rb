@@ -99,7 +99,7 @@ def clear_bot_cache(bot)
       "Nanka okashii..."
     end
   else
-    "There are no #{bot} in db."
+    "There is no #{bot} in db."
   end
 end
 
