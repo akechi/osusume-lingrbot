@@ -115,7 +115,7 @@ def bot_relay(bot, message)
       doc = Nokogiri::HTML.parse(f)
       uri = ''
       doc.css('#property .left').each do |node|
-        if node.text =~ /Endpoint:/
+        if /Endpoint:/ =~ node.text
           uri = node.next.next.text.strip
           return '' if uri == ''
           Bot.create({:name => bot, :endpoint => uri})
