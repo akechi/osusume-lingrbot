@@ -59,6 +59,7 @@ class Bot
   property :id, Serial
   property :name, String, :unique => true
   property :endpoint, String, :length => 256
+  property :type, String, :length => 256, :default => 'lingr'
 end
 DataMapper.finalize
 
@@ -106,9 +107,9 @@ end
 def bot_relay(bot, message)
   return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume' && message.empty?
   found = Bot.first({:name => bot})
-  uri =
+  uri, type =
     if found
-      found[:endpoint]
+      found[:endpoint], found[:type]
     else
       LOGGER.info("Fetching bot endpoint: #{bot}")
       f = open("http://lingr.com/bot/#{bot}").read
@@ -119,19 +120,29 @@ def bot_relay(bot, message)
           uri = node.next.next.text.strip
           return '' if uri == ''
           Bot.create({:name => bot, :endpoint => uri})
-          uri
+          uri, 'lingr'
         end
     end
   return '' if uri == ""
   endpoint = URI.parse(uri)
   LOGGER.info("Relay endpoint: #{endpoint}")
-  status = { "events" => [{ "message" => message }] }
   begin
-    req = Net::HTTP::Post.new(
-      endpoint.path.empty? ? "/" : endpoint.path,
-      initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
-    req.body = status.to_json
-    req.content_type = 'application/json'
+    case type
+    when 'lingr'
+      req = Net::HTTP::Post.new(
+        endpoint.path.empty? ? "/" : endpoint.path,
+        initheader = {'Content-Type' =>'application/json', 'Host' => endpoint.host, 'HTTP_X_REAL_IP' => LINGR_IP})
+      status = { "events" => [{ "message" => message }] }
+      req.body = status.to_json
+      req.content_type = 'application/json'
+    case 'slack'
+      req = Net::HTTP::Post.new(
+        endpoint.path.empty? ? "/" : endpoint.path)
+      req.set_from_data("text" => message)
+      req.body = status.to_json
+    else
+      return "Invalid bot type #{type} for #{bot}"
+    end
     http = Net::HTTP.new(endpoint.host, endpoint.port)
     http.start do |h|
       res = h.request(req)
