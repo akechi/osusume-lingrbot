@@ -133,22 +133,34 @@ def bot_relay(name, message)
       status = { "events" => [{ "message" => message }] }
       req.body = status.to_json
       req.content_type = 'application/json'
-	when 'slack'
+      http = Net::HTTP.new(endpoint.host, endpoint.port)
+      http.start do |h|
+        res = h.request(req)
+        if res.code == '200'
+          return res.body
+        else
+          log_uri = "#{WEB_URI}log"
+          return "Response code #{res.code} returned when relaying `#{endpoint}`.\n#{log_uri}"
+        end
+      end
+    when 'slack'
       req = Net::HTTP::Post.new(
         endpoint.path.empty? ? "/" : endpoint.path)
-      req.set_from_data("text" => message)
+      LOGGER.info("send #{message} to #{endpoint}")
+      req.set_form_data(message)
+      http = Net::HTTP.new(endpoint.host, endpoint.port)
+      http.start do |h|
+        res = h.request(req)
+        if res.code == '200'
+          LOGGER.info("reply #{res.body} from #{endpoint}")
+          return res.body.empty? ? '' : JSON.parse(res.body)["text"]
+        else
+          log_uri = "#{WEB_URI}log"
+          return "Response code #{res.code} returned when relaying `#{endpoint}`.\n#{log_uri}"
+        end
+      end
     else
       return "Invalid bot type #{type} for #{name}"
-    end
-    http = Net::HTTP.new(endpoint.host, endpoint.port)
-    http.start do |h|
-      res = h.request(req)
-      if res.code == '200'
-        return res.body
-      else
-        log_uri = "#{WEB_URI}log"
-        return "Response code #{res.code} returned when relaying `#{endpoint}`.\n#{log_uri}"
-      end
     end
   rescue Exception => e
     LOGGER.info e.message
