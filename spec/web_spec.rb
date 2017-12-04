@@ -294,7 +294,7 @@ describe 'The Osusume' do
       end
       subject { Web.osusume_the_greatest_hit(@message) }
       it { should be_a_kind_of(String) }
-      it { should =~ /^\n\s+\nおすすめさんの編集方法/ }
+      it { should =~ /#おすすめさんの編集方法/ }
     end
   end
 end
@@ -564,7 +564,7 @@ describe 'The Osusume via Sinatra' do
         body = { "events" => [ { "message" => { "text" => text, "room" => "computer_science", "nickname" => "joe" } } ] }
         post '/lingr', body.to_json.to_s
         last_response.should be_ok
-        last_response.body.should =~ /^\n\s+\nおすすめさんの編集方法/
+        last_response.body.should =~ /#おすすめさんの編集方法/
       end
     end
   end
