@@ -104,28 +104,26 @@ def clear_bot_cache(bot)
   end
 end
 
-def bot_relay(bot, message)
-  return 'osusumeなら俺の隣で寝てるよ？' if bot == 'osusume' && message.empty?
-  found = Bot.first({:name => bot})
-  uri, type =
-    if found
-      found[:endpoint], found[:type]
-    else
-      LOGGER.info("Fetching bot endpoint: #{bot}")
-      f = open("http://lingr.com/bot/#{bot}").read
-      doc = Nokogiri::HTML.parse(f)
-      doc.css('#property .left').
-        select {|node| /Endpoint:/ =~ node.text }.
-        inject('') do |uri, node|
-          uri = node.next.next.text.strip
-          return '' if uri == ''
-          Bot.create({:name => bot, :endpoint => uri})
-          uri, 'lingr'
-        end
-    end
-  return '' if uri == ""
-  endpoint = URI.parse(uri)
-  LOGGER.info("Relay endpoint: #{endpoint}")
+def bot_relay(name, message)
+  return 'osusumeなら俺の隣で寝てるよ？' if name == 'osusume' && message.empty?
+  bot = Bot.first({:name => name})
+  unless bot
+    LOGGER.info("Fetching bot endpoint: #{name}")
+    f = open("http://lingr.com/bot/#{name}").read
+    doc = Nokogiri::HTML.parse(f)
+    doc.css('#property .left').
+      select {|node| /Endpoint:/ =~ node.text }.
+      inject('') do |uri, node|
+        uri = node.next.next.text.strip
+        return '' if uri == ''
+        bot = Bot.create({:name => name, :endpoint => uri, :type => 'lingr'})
+      end
+  end
+  return unless bot
+  name = bot[:name]
+  endpoint = URI.parse(bot[:endpoint])
+  type = bot[:type]
+  LOGGER.info("Relay endpoint of #{}: #{endpoint}")
   begin
     case type
     when 'lingr'
@@ -135,13 +133,13 @@ def bot_relay(bot, message)
       status = { "events" => [{ "message" => message }] }
       req.body = status.to_json
       req.content_type = 'application/json'
-    case 'slack'
+	when 'slack'
       req = Net::HTTP::Post.new(
         endpoint.path.empty? ? "/" : endpoint.path)
       req.set_from_data("text" => message)
       req.body = status.to_json
     else
-      return "Invalid bot type #{type} for #{bot}"
+      return "Invalid bot type #{type} for #{name}"
     end
     http = Net::HTTP.new(endpoint.host, endpoint.port)
     http.start do |h|
