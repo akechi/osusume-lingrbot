@@ -109,7 +109,7 @@ def bot_relay(name, message)
   bot = Bot.first({:name => name})
   unless bot
     LOGGER.info("Fetching bot endpoint: #{name}")
-    f = open("http://lingr.com/bot/#{name}").read
+    f = open("http://lingr.com/bots/#{name}").read
     doc = Nokogiri::HTML.parse(f)
     doc.css('#property .left').
       select {|node| /Endpoint:/ =~ node.text }.
@@ -137,7 +137,6 @@ def bot_relay(name, message)
       req = Net::HTTP::Post.new(
         endpoint.path.empty? ? "/" : endpoint.path)
       req.set_from_data("text" => message)
-      req.body = status.to_json
     else
       return "Invalid bot type #{type} for #{name}"
     end
