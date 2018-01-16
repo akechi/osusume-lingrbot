@@ -42,7 +42,7 @@ $stdout = MultiIO.new($stdout, filelog)
 $stderr = MultiIO.new($stderr, filelog)
 LOGGER = Logger.new(filelog)
 set :logger, LOGGER
-WEB_URI = ENV['OSUSUME_WEB_URI'] || "http://osusume.herokuapp.com/"
+WEB_URI = ENV['OSUSUME_WEB_URI'] || "http://osusume.raa0121.info/"
 
 class Osusume
   include DataMapper::Resource
@@ -64,7 +64,7 @@ end
 DataMapper.finalize
 
 configure :production do
-  dsn = ENV["HEROKU_POSTGRESQL_TEAL_URL"]
+  dsn = ENV["POSTGRESQL_URL"]
   DataMapper::setup(:default, dsn)
   Osusume.auto_upgrade!
   Bot.auto_upgrade!
